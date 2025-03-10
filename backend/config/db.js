@@ -15,4 +15,17 @@ const sequelize = new Sequelize(
     }
   );
 
+
+  // Тест подключения к БД todo db
+export async function testDatabaseConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log('Подключение к базе данных успешно установлено.');
+  } catch (error) {
+    console.error('Ошибка подключения к базе данных:', error);
+  }
+}
+
+
+
 export default sequelize; 

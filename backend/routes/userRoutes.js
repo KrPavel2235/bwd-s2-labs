@@ -5,6 +5,8 @@
  *   description: Управление пользователями
  */
 
+import { create, getAll } from "../controllers/user.controller";
+
 /**
  * @swagger
  * /users:
@@ -23,14 +25,7 @@
  *       500:
  *         description: Ошибка сервера
  */
-app.get('/users', async (req, res) => {
-    try {
-      const users = await User.findAll();
-      res.status(200).json(users);
-    } catch (error) {
-      res.status(500).json({ error: 'Ошибка при получении пользователей' });
-    }
-  });
+app.get('/users', getAll);
   
   /**
    * @swagger
@@ -56,22 +51,4 @@ app.get('/users', async (req, res) => {
    *       500:
    *         description: Ошибка сервера
    */
-  app.post('/users', async (req, res) => {
-    try {
-      const { name, email } = req.body;
-  
-      if (!name || !email) {
-        return res.status(400).json({ error: 'Необходимо указать name и email' });
-      }
-  
-      const existingUser = await User.findOne({ where: { email } });
-      if (existingUser) {
-        return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
-      }
-  
-      const user = await User.create({ name, email });
-      res.status(201).json(user);
-    } catch (error) {
-      res.status(500).json({ error: 'Ошибка при создании пользователя' });
-    }
-  });
+  app.post('/users', create);
