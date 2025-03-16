@@ -26,6 +26,14 @@ export async function testDatabaseConnection() {
   }
 }
 
+export async function syncDatabase() {
+  try {
+    await sequelize.sync({ force: true }); // { force: true } для разработки
+    console.log('База данных успешно синхронизирована.');
+  } catch (error) {
+    console.error('Ошибка синхронизации базы данных:', error);
+  }
+}
 
 
 export default sequelize; 

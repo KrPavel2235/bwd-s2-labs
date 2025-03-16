@@ -1,17 +1,24 @@
-class ValidationError extends Error {
-    constructor(message) {
+// Базовый класс для кастомных ошибок
+class CustomError extends Error {
+  constructor(message, statusCode, name) {
       super(message);
-      this.name = 'ValidationError';
-      this.statusCode = 400;
-    }
+      this.name = name || 'CustomError';
+      this.statusCode = statusCode || 500;
   }
-  
-  class NotFoundError extends Error {
-    constructor(message) {
-      super(message);
-      this.name = 'NotFoundError';
-      this.statusCode = 404;
-    }
+}
+
+// Ошибка валидации
+class ValidationError extends CustomError {
+  constructor(message) {
+      super(message, 400, 'ValidationError');
   }
-  
-export { ValidationError, NotFoundError };
+}
+
+// Ошибка "Не найдено"
+class NotFoundError extends CustomError {
+  constructor(message) {
+      super(message, 404, 'NotFoundError');
+  }
+}
+
+export { CustomError, ValidationError, NotFoundError };

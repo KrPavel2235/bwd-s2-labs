@@ -1,11 +1,14 @@
+import express from 'express';
+import { createUser, deleteByIdUser, getAllUsers, getByIdUser, putByIdUser } from "../controllers/user.controller.js";
+
+const userRouter = express.Router();
+
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: Управление пользователями
  */
-
-import { create, getAll } from "../controllers/user.controller";
 
 /**
  * @swagger
@@ -25,30 +28,117 @@ import { create, getAll } from "../controllers/user.controller";
  *       500:
  *         description: Ошибка сервера
  */
-app.get('/users', getAll);
-  
-  /**
-   * @swagger
-   * /users:
-   *   post:
-   *     summary: Создать нового пользователя
-   *     tags: [Users]
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             $ref: '#/components/schemas/UserInput'
-   *     responses:
-   *       201:
-   *         description: Пользователь успешно создан
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/User'
-   *       400:
-   *         description: Некорректные данные
-   *       500:
-   *         description: Ошибка сервера
-   */
-  app.post('/users', create);
+userRouter.get('/', getAllUsers);
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Создать нового пользователя
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserInput'
+ *     responses:
+ *       201:
+ *         description: Пользователь успешно создан
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Некорректные данные
+ *       500:
+ *         description: Ошибка сервера
+ */
+userRouter.post('/', createUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Получить пользователя по ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     responses:
+ *       200:
+ *         description: Пользователь найден
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+userRouter.get('/:id', getByIdUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Обновить пользователя по ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserInput'
+ *     responses:
+ *       200:
+ *         description: Пользователь успешно обновлён
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Некорректные данные
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+userRouter.put('/:id', putByIdUser);
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Удалить пользователя по ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     responses:
+ *       204:
+ *         description: Пользователь успешно удалён
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+userRouter.delete('/:id', deleteByIdUser);
+
+export default userRouter;

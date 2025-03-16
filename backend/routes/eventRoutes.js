@@ -1,4 +1,14 @@
-const router = new Router();
+import express from 'express';
+import { getAllEvent, createEvent, putByIdEvent, getByIdEvent, deleteByIdEvent } from "../controllers/event.controller.js";
+
+const eventRouter = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Events
+ *   description: Управление мероприятиями
+ */
 
 /**
  * @swagger
@@ -24,26 +34,7 @@ const router = new Router();
  *       500:
  *         description: Ошибка сервера
  */
-router.post('/', async (req, res, next) => {
-  try {
-    const { title, description, date, place, userId } = req.body;
-
-    if (!title || !date || !place || !userId) {
-      throw new ValidationError('Необходимо указать title, date, place и userId');
-    }
-
-    const event = await Event.create({ title, description, date, place, userId });
-    res.status(201).json(event);
-  } catch (error) {
-    next(error);
-  }
-});
-/**
- * @swagger
- * tags:
- *   name: Events
- *   description: Управление мероприятиями
- */
+eventRouter.post('/', createEvent);
 
 /**
  * @swagger
@@ -63,64 +54,91 @@ router.post('/', async (req, res, next) => {
  *       500:
  *         description: Ошибка сервера
  */
-router.get('/', async (req, res, next) => {
-  try {
-    const events = await Event.findAll();
-    res.status(200).json(events);
-  } catch (error) {
-    next(error);
-  }
-});
+eventRouter.get('/', getAllEvent);
 
-router.get('/:id', async (req, res, next) => {
-  try {
-    const event = await Event.findByPk(req.params.id);
-    if (!event) {
-      throw new NotFoundError('Мероприятие не найдено');
-    }
-    res.status(200).json(event);
-  } catch (error) {
-    next(error);
-  }
-});
+/**
+ * @swagger
+ * /events/{id}:
+ *   get:
+ *     summary: Получить мероприятие по ID
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID мероприятия
+ *     responses:
+ *       200:
+ *         description: Мероприятие найдено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: Мероприятие не найдено
+ *       500:
+ *         description: Ошибка сервера
+ */
+eventRouter.get('/:id', getByIdEvent);
 
-router.put('/:id', async (req, res, next) => {
-  try {
-    const { title, description, date, place } = req.body;
+/**
+ * @swagger
+ * /events/{id}:
+ *   put:
+ *     summary: Обновить мероприятие по ID
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID мероприятия
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EventInput'
+ *     responses:
+ *       200:
+ *         description: Мероприятие успешно обновлено
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Некорректные данные
+ *       404:
+ *         description: Мероприятие не найдено
+ *       500:
+ *         description: Ошибка сервера
+ */
+eventRouter.put('/:id', putByIdEvent);
 
-    if (!title || !date || !place) {
-      throw new ValidationError('Необходимо указать title, date и place');
-    }
+/**
+ * @swagger
+ * /events/{id}:
+ *   delete:
+ *     summary: Удалить мероприятие по ID
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID мероприятия
+ *     responses:
+ *       204:
+ *         description: Мероприятие успешно удалено
+ *       404:
+ *         description: Мероприятие не найдено
+ *       500:
+ *         description: Ошибка сервера
+ */
+eventRouter.delete('/:id', deleteByIdEvent);
 
-    const event = await Event.findByPk(req.params.id);
-    if (!event) {
-      throw new NotFoundError('Мероприятие не найдено');
-    }
-
-    event.title = title;
-    event.description = description;
-    event.date = date;
-    event.place = place;
-    await event.save();
-
-    res.status(200).json(event);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/:id', async (req, res, next) => {
-  try {
-    const event = await Event.findByPk(req.params.id);
-    if (!event) {
-      throw new NotFoundError('Мероприятие не найдено');
-    }
-
-    await event.destroy();
-    res.status(200).json({ message: 'Мероприятие успешно удалено' });
-  } catch (error) {
-    next(error);
-  }
-});
-
-export default router;
+export default eventRouter;

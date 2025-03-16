@@ -3,30 +3,21 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerSetup from './config/swagger.js';
-import sequelize, { testDatabaseConnection } from './config/db.js';
-import { User, Event } from './models/index.js';
-import { ValidationError, NotFoundError } from './config/error.js';
+import { syncDatabase, testDatabaseConnection}  from './config/db.js';
 import errorMiddlerware from './middleware/errorMiddlerware.js';
+import router from './routes/router.js/'
+import morgan from 'morgan';
 
 dotenv.config();
-
 const app = express();
-
 app.use(express.json());
 app.use(cors());
-
-
-
 testDatabaseConnection();
-
-// Обработка ошибок
 app.use(errorMiddlerware);
-
-app.use("/", router);
+app.use(router);
+app.use(morgan('tiny'))
 
 // todo документация свагера к каждому маршруту
-
-
 // Подключение Swagger
 swaggerSetup(app);
 
@@ -46,15 +37,5 @@ server.on('error', (error) => {
     console.error('Произошла ошибка при запуске сервера:', error);
   }
 });
-
-// Синхронизация моделей с базой данных todo db
-async function syncDatabase() {
-  try {
-    await sequelize.sync({ force: true }); // { force: true } для разработки
-    console.log('База данных успешно синхронизирована.');
-  } catch (error) {
-    console.error('Ошибка синхронизации базы данных:', error);
-  }
-}
 
 syncDatabase();
