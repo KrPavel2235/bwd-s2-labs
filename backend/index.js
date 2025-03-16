@@ -1,4 +1,3 @@
-// app.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -15,7 +14,7 @@ app.use(cors());
 testDatabaseConnection();
 app.use(errorMiddlerware);
 app.use(router);
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 // todo документация свагера к каждому маршруту
 // Подключение Swagger
