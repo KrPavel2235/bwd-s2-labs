@@ -1,24 +1,32 @@
-// Базовый класс для кастомных ошибок
 class CustomError extends Error {
-  constructor(message, statusCode, name) {
+  constructor(message, statusCode) {
       super(message);
-      this.name = name || 'CustomError';
-      this.statusCode = statusCode || 500;
+      this.statusCode = statusCode;
   }
 }
 
-// Ошибка валидации
 class ValidationError extends CustomError {
-  constructor(message) {
-      super(message, 400, 'ValidationError');
+  constructor(message = 'Некорректный запрос') {
+      super(message, 400);
   }
 }
 
-// Ошибка "Не найдено"
 class NotFoundError extends CustomError {
-  constructor(message) {
-      super(message, 404, 'NotFoundError');
+  constructor(message = 'Ресурс не найден') {
+      super(message, 404);
   }
 }
 
-export { CustomError, ValidationError, NotFoundError };
+class InternalServerError extends CustomError {
+  constructor(message = 'Внутренняя ошибка сервера') {
+      super(message, 500);
+  }
+}
+
+const handleError = (res, error, defaultMessage) => {
+  console.log(defaultMessage || error);
+  const statusCode = error.statusCode || 500;
+  res.status(statusCode).json({ error: error.message || defaultMessage });
+};
+
+export { CustomError, ValidationError, InternalServerError, NotFoundError, handleError };

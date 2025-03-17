@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import swaggerSetup from './config/swagger.js';
 import { syncDatabase, testDatabaseConnection}  from './config/db.js';
 import errorMiddlerware from './middleware/errorMiddlerware.js';
-import router from './routes/router.js/'
+import router from './routes/router.js'
 import morgan from 'morgan';
 
 dotenv.config();
