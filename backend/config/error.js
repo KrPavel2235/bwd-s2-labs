@@ -23,10 +23,4 @@ class InternalServerError extends CustomError {
   }
 }
 
-const handleError = (res, error, defaultMessage) => {
-  console.log(defaultMessage || error);
-  const statusCode = error.statusCode || 500;
-  res.status(statusCode).json({ error: error.message || defaultMessage });
-};
-
-export { CustomError, ValidationError, InternalServerError, NotFoundError, handleError };
+export { CustomError, ValidationError, InternalServerError, NotFoundError};

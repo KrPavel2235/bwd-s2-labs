@@ -1,60 +1,26 @@
-import express from 'express';
-import { createUser, deleteByIdUser, getAllUsers, getByIdUser, putByIdUser } from "../controllers/user.controller.js";
+import { Router } from 'express';
+import userController from '../controllers/user.controller.js';
 
-const userRouter = express.Router();
+const router = Router();
 
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: Управление пользователями
+ *   description: API для управления пользователями
  */
 
 /**
  * @swagger
  * /users:
  *   get:
- *     summary: Получить список всех пользователей
+ *     summary: Получить всех пользователей
  *     tags: [Users]
  *     responses:
  *       200:
  *         description: Список пользователей
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       500:
- *         description: Ошибка сервера
  */
-userRouter.get('/', getAllUsers);
-
-/**
- * @swagger
- * /users:
- *   post:
- *     summary: Создать нового пользователя
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/UserInput'
- *     responses:
- *       201:
- *         description: Пользователь успешно создан
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Некорректные данные
- *       500:
- *         description: Ошибка сервера
- */
-userRouter.post('/', createUser);
+router.get('/', userController.getAllUsers);
 
 /**
  * @swagger
@@ -67,78 +33,97 @@ userRouter.post('/', createUser);
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *         description: ID пользователя
  *     responses:
  *       200:
- *         description: Пользователь найден
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
+ *         description: Данные пользователя
  *       404:
  *         description: Пользователь не найден
- *       500:
- *         description: Ошибка сервера
  */
-userRouter.get('/:id', getByIdUser);
+router.get('/:id', userController.getUserById);
+
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Создать нового пользователя
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email]
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Иван"
+ *               email:
+ *                 type: string
+ *                 example: "ivan@example.com"
+ *     responses:
+ *       201:
+ *         description: Пользователь создан
+ *       400:
+ *         description: Ошибка валидации
+ */
+router.post('/', userController.createUser);
 
 /**
  * @swagger
  * /users/{id}:
  *   put:
- *     summary: Обновить пользователя по ID
+ *     summary: Обновить пользователя
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *         description: ID пользователя
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Новый Иван"
+ *               email:
+ *                 type: string
+ *                 example: "newemail@example.com"
  *     responses:
  *       200:
- *         description: Пользователь успешно обновлён
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Некорректные данные
+ *         description: Пользователь обновлен
  *       404:
  *         description: Пользователь не найден
- *       500:
- *         description: Ошибка сервера
  */
-userRouter.put('/:id', putByIdUser);
+router.put('/:id', userController.updateUser);
 
 /**
  * @swagger
  * /users/{id}:
  *   delete:
- *     summary: Удалить пользователя по ID
+ *     summary: Удалить пользователя
  *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *         description: ID пользователя
  *     responses:
- *       204:
- *         description: Пользователь успешно удалён
+ *       200:
+ *         description: Пользователь удален
  *       404:
  *         description: Пользователь не найден
- *       500:
- *         description: Ошибка сервера
  */
-userRouter.delete('/:id', deleteByIdUser);
+router.delete('/:id', userController.deleteUser);
 
-export default userRouter;
+export default router;

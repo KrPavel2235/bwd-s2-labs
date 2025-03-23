@@ -1,79 +1,91 @@
-import { ValidationError, NotFoundError } from "../config/error.js";
-import Event from "../models/Event.js";
+import Event from '../models/Event.js';
+import User from '../models/User.js';
+import { ValidationError, NotFoundError } from '../config/error.js';
 
-export async function createEvent(req, res, next) {
-    try {
-        const { title, description, date, place, userId } = req.body;;
-    
-        if (!title || !date || !place || !userId ) {
-          throw new ValidationError('необходимо указать title date place userId')
-        }
-
-        const event = await Event.create({title, description, date, place, userId});
-    
-        res.status(200).json(event);
-      } catch (error) {
-        next(error);
+const eventController = {
+    // Получить все события
+    async getAllEvents(req, res, next) {
+      try {
+          const events = await Event.findAll({
+              include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }],
+          });
+          res.json(events);
+      } catch (err) {
+          next(err);
       }
-}
+  },
 
-export async function getAllEvent(req, res, next) {
-    try {
-        const events = await Event.findAll();
-        res.status(200).json(events);
-      } catch (error) {
-        next(error);
-      }
-}
+    // Получить событие по ID
+    async getEventById(req, res, next) {
+        try {
+            const { id } = req.params;
+            const event = await Event.findByPk(id, {include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }]});
 
-export async function getByIdEvent(req,res,next){
-    try {
-        const event = await Event.findByPk(req.params.id);
-        if (!event) {
-          throw new NotFoundError('Мероприятие не найдено');
+            if (!event) {
+                throw new NotFoundError('Событие не найдено');
+            }
+
+            res.json(event);
+        } catch (err) {
+            next(err);
         }
-        res.status(200).json(event);
-      } catch (error) {
-        next(error);
-      }
-}
+    },
 
-export async function putByIdEvent(res, req, next) {
-    try {
-        const { title, description, date, place } = req.body;
-    
-        if (!title || !date || !place) {
-          throw new ValidationError('Необходимо указать title, date и place');
-        }
-    
-        const event = await Event.findByPk(req.params.id);
-        if (!event) {
-          throw new NotFoundError('Мероприятие не найдено');
-        }
-    
-        event.title = title;
-        event.description = description;
-        event.date = date;
-        event.place = place;
-        await event.save();
-    
-        res.status(200).json(event);
-      } catch (error) {
-        next(error);
-      }
+    // Создать новое событие
+    async createEvent(req, res, next) {
+        try {
+            const { title, description, date, place, userId } = req.body;
 
-}
+            if (!title || !date || !place || !userId) {
+                throw new ValidationError('Название, дата, место и userId обязательны');
+            }
 
-export async function deleteByIdEvent(res, req, next) {
-    try {
-        const event = await Event.findByPk(req.params.id);
-        if (!event) {
-          throw new NotFoundError('Мероприятие не найдено');
+            const user = await User.findByPk(userId);
+            if (!user) {
+                throw new NotFoundError('Пользователь не найден');
+            }
+
+            const newEvent = await Event.create({ title, description, date, place, userId });
+            res.status(201).json(newEvent);
+        } catch (err) {
+            next(err);
         }
-    
-        await event.destroy();
-        res.status(200).json({ message: 'Мероприятие успешно удалено' });
-      } catch (error) {
-        next(error);
-      }
-}
+    },
+
+    // Обновить событие
+    async updateEvent(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { title, description, date, place } = req.body;
+
+            const event = await Event.findByPk(id);
+            if (!event) {
+                throw new NotFoundError('Событие не найдено');
+            }
+
+            await event.update({ title, description, date, place });
+            res.json(event);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    // Удалить событие
+    async deleteEvent(req, res, next) {
+        try {
+            const { id } = req.params;
+            const event = await Event.findByPk(id);
+
+            if (!event) {
+                throw new NotFoundError('Событие не найдено');
+            }
+
+            await event.destroy();
+            res.json({ message: 'Событие удалено' });
+        } catch (err) {
+            next(err);
+        }
+    }
+};
+
+export default eventController;

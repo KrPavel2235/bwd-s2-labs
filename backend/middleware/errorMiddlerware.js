@@ -1,17 +1,43 @@
-import { ValidationError, NotFoundError } from '../config/error.js';
+import { CustomError } from '../config/error.js';
 
-export default function (err, req, res, next) {
-    console.error('Ошибка:', err); 
+function errorMiddleware(err, req, res, next) {
+    console.error(err.stack);
 
-    if (err.name === 'ValidationError' || err.name === 'SequelizeUniqueConstraintError') {
-        return res.status(400).json({
-            error: err.errors.map(e => e.message).join(', '), 
-        });
+    let statusCode = err.statusCode || 500;
+    let message = err.message || 'Внутренняя ошибка сервера';
+    let errors = [];
+
+    if (err instanceof CustomError) {
+        statusCode = err.statusCode;
+        message = err.message;
     }
 
-    if (err instanceof ValidationError || err instanceof NotFoundError) {
-        return res.status(err.statusCode).json({ error: err.message });
+    // Ошибки валидации Sequelize
+    if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+        statusCode = 400;
+        message = 'Ошибка валидации данных';
+        errors = err.errors?.map(e => e.message) || [];
     }
 
-    res.status(500).json({ error: 'Что-то пошло не так' });
+    // Ошибка, если запись уже существует (уникальное ограничение в БД)
+    if (err.name === 'SequelizeUniqueConstraintError') {
+        statusCode = 409;
+        message = 'Дублирующиеся данные';
+        errors.push('Запись с такими данными уже существует.');
+    }
+
+    // Ошибка авторизации (например, если токен невалиден)
+    if (err.name === 'UnauthorizedError') {
+        statusCode = 401;
+        message = 'Не авторизован';
+    }
+
+    res.status(statusCode).json({
+        error: {
+            message: message,
+            errors: errors.length ? errors : undefined,
+        },
+    });
 }
+
+export default errorMiddleware;

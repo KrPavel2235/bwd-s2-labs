@@ -1,8 +1,9 @@
-import User from './User.js';
-import Event from './Event.js';
+import sequelize from '../config/db.js';
+import User from './user.js';
+import Event from './event.js';
 
-// Связь "один ко многим"
-User.hasMany(Event, { foreignKey: 'userId' }); // У пользователя может быть много мероприятий
-Event.belongsTo(User); // Мероприятие принадлежит одному пользователю
+// Устанавливаем связи между моделями
+User.hasMany(Event, { foreignKey: 'userId', as: 'events' });
+Event.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-export { User, Event };
+export { sequelize, User, Event };

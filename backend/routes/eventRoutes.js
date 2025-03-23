@@ -1,144 +1,139 @@
-import express from 'express';
-import { getAllEvent, createEvent, putByIdEvent, getByIdEvent, deleteByIdEvent } from "../controllers/event.controller.js";
+import { Router } from 'express';
+import eventController from '../controllers/event.controller.js';
 
-const eventRouter = express.Router();
+const router = Router();
 
 /**
  * @swagger
  * tags:
  *   name: Events
- *   description: Управление мероприятиями
+ *   description: API для управления событиями
  */
+
+/**
+ * @swagger
+ * /events:
+ *   get:
+ *     summary: Получить все события
+ *     tags: [Events]
+ *     responses:
+ *       200:
+ *         description: Список событий
+ */
+router.get('/', eventController.getAllEvents);
+
+/**
+ * @swagger
+ * /events/{id}:
+ *   get:
+ *     summary: Получить событие по ID
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID события
+ *     responses:
+ *       200:
+ *         description: Данные события
+ *       404:
+ *         description: Событие не найдено
+ */
+router.get('/:id', eventController.getEventById);
 
 /**
  * @swagger
  * /events:
  *   post:
- *     summary: Создать новое мероприятие
+ *     summary: Создать новое событие
  *     tags: [Events]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/EventInput'
+ *             type: object
+ *             required: [title, date, place, userId]
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Конференция"
+ *               description:
+ *                 type: string
+ *                 example: "Описание конференции"
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-05-10T12:00:00Z"
+ *               place:
+ *                 type: string
+ *                 example: "Москва"
+ *               userId:
+ *                 type: string
+ *                 example: "uuid-пользователя"
  *     responses:
  *       201:
- *         description: Мероприятие успешно создано
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
+ *         description: Событие создано
  *       400:
- *         description: Некорректные данные
- *       500:
- *         description: Ошибка сервера
+ *         description: Ошибка валидации
  */
-eventRouter.post('/', createEvent);
-
-/**
- * @swagger
- * /events:
- *   get:
- *     summary: Получить список всех мероприятий
- *     tags: [Events]
- *     responses:
- *       200:
- *         description: Список мероприятий
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Event'
- *       500:
- *         description: Ошибка сервера
- */
-eventRouter.get('/', getAllEvent);
-
-/**
- * @swagger
- * /events/{id}:
- *   get:
- *     summary: Получить мероприятие по ID
- *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID мероприятия
- *     responses:
- *       200:
- *         description: Мероприятие найдено
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
- *       404:
- *         description: Мероприятие не найдено
- *       500:
- *         description: Ошибка сервера
- */
-eventRouter.get('/:id', getByIdEvent);
+router.post('/', eventController.createEvent);
 
 /**
  * @swagger
  * /events/{id}:
  *   put:
- *     summary: Обновить мероприятие по ID
+ *     summary: Обновить событие
  *     tags: [Events]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
- *         description: ID мероприятия
+ *           type: string
+ *         description: ID события
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/EventInput'
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Обновленное название"
+ *               description:
+ *                 type: string
+ *                 example: "Новое описание"
  *     responses:
  *       200:
- *         description: Мероприятие успешно обновлено
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
- *       400:
- *         description: Некорректные данные
+ *         description: Событие обновлено
  *       404:
- *         description: Мероприятие не найдено
- *       500:
- *         description: Ошибка сервера
+ *         description: Событие не найдено
  */
-eventRouter.put('/:id', putByIdEvent);
+router.put('/:id', eventController.updateEvent);
 
 /**
  * @swagger
  * /events/{id}:
  *   delete:
- *     summary: Удалить мероприятие по ID
+ *     summary: Удалить событие
  *     tags: [Events]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
- *         description: ID мероприятия
+ *           type: string
+ *         description: ID события
  *     responses:
- *       204:
- *         description: Мероприятие успешно удалено
+ *       200:
+ *         description: Событие удалено
  *       404:
- *         description: Мероприятие не найдено
- *       500:
- *         description: Ошибка сервера
+ *         description: Событие не найдено
  */
-eventRouter.delete('/:id', deleteByIdEvent);
+router.delete('/:id', eventController.deleteEvent);
 
-export default eventRouter;
+export default router;
