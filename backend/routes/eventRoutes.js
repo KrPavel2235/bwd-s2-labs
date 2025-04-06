@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import eventController from '../controllers/event.controller.js';
+import passport from "passport";
 
 const router = Router();
 
@@ -41,7 +42,7 @@ router.get('/', eventController.getAllEvents);
  *       404:
  *         description: Событие не найдено
  */
-router.get('/:id', eventController.getEventById);
+router.get('/:id', passport.authenticate("jwt", {seession: false}), eventController.getEventById);
 
 /**
  * @swagger
@@ -79,7 +80,7 @@ router.get('/:id', eventController.getEventById);
  *       400:
  *         description: Ошибка валидации
  */
-router.post('/', eventController.createEvent);
+router.post('/', passport.authenticate("jwt", {seession: false}), eventController.createEvent);
 
 /**
  * @swagger
@@ -113,7 +114,7 @@ router.post('/', eventController.createEvent);
  *       404:
  *         description: Событие не найдено
  */
-router.put('/:id', eventController.updateEvent);
+router.put('/:id', passport.authenticate("jwt", {seession: false}), eventController.updateEvent);
 
 /**
  * @swagger
@@ -134,6 +135,6 @@ router.put('/:id', eventController.updateEvent);
  *       404:
  *         description: Событие не найдено
  */
-router.delete('/:id', eventController.deleteEvent);
+router.delete('/:id', passport.authenticate("jwt", {seession: false}), eventController.deleteEvent);
 
 export default router;

@@ -1,5 +1,5 @@
 import { createUsers, createUserCheck } from "../services/user.service.js";
-import { ValidationError, NotFoundError } from "../config/error.js";
+import { BadRequestError, NotFoundError } from "../config/error.js";
 import User from "../models/User.js";
 
 const userController = {
@@ -10,6 +10,10 @@ const userController = {
       } catch (err) {
           next(err);
       }
+  },
+
+  async findByEmail(email){
+    return await User.findOne({ where: { email } });
   },
 
   async getUserById(req, res, next) {
@@ -33,7 +37,7 @@ const userController = {
           const { name, email } = req.body;
 
           if (!name || !email ) {
-              throw new ValidationError('У пользователя должны быть имя и почта!');
+              throw new BadRequestError('У пользователя должны быть имя и почта!');
           }
 
           await createUserCheck(email);

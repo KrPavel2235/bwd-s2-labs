@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 import swaggerSetup from './config/swagger.js';
 import { syncDatabase, testDatabaseConnection}  from './config/db.js';
 import errorMiddlerware from './middleware/errorMiddlerware.js';
-import router from './routes/router.js'
+import authMiddleware from "./middleware/authMiddleware.js";
+import router from './routes/router.js';
+import authRoutes from "./routes/authRoutes.js";
 import morgan from 'morgan';
 
 dotenv.config();
@@ -13,7 +15,9 @@ app.use(express.json());
 app.use(cors());
 testDatabaseConnection();
 app.use(errorMiddlerware);
+app.use(authMiddleware.initialize());
 app.use(router);
+app.use("/auth", authRoutes);
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 // todo документация свагера к каждому маршруту

@@ -5,9 +5,15 @@ class CustomError extends Error {
   }
 }
 
-class ValidationError extends CustomError {
+class BadRequestError extends CustomError {
   constructor(message = 'Некорректный запрос') {
       super(message, 400);
+  }
+}
+
+class UnauthorizedError extends CustomError {
+  constructor(message = 'Неавторизованный доступ') {
+      super(message, 401);
   }
 }
 
@@ -23,4 +29,16 @@ class InternalServerError extends CustomError {
   }
 }
 
-export { CustomError, ValidationError, InternalServerError, NotFoundError};
+class ForbiddenError extends CustomError {
+  constructor(message = "Forbidden: Invalid API Key") {
+    super(message, 403);
+  }
+}
+
+const handleError = (res, error, defaultMessage) => {
+  console.log(defaultMessage || error);
+  const statusCode = error.statusCode || 500;
+  res.status(statusCode).json({ error: error.message || defaultMessage });
+};
+
+export { CustomError, BadRequestError, UnauthorizedError, NotFoundError, InternalServerError, ForbiddenError, handleError };

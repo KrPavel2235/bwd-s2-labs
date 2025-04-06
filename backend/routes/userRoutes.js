@@ -63,6 +63,9 @@ router.get('/:id', userController.getUserById);
  *               email:
  *                 type: string
  *                 example: "ivan@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "123"
  *     responses:
  *       201:
  *         description: Пользователь создан

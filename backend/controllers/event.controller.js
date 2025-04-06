@@ -1,6 +1,6 @@
 import Event from '../models/Event.js';
 import User from '../models/User.js';
-import { ValidationError, NotFoundError } from '../config/error.js';
+import { BadRequestError, NotFoundError } from '../config/error.js';
 
 const eventController = {
     // Получить все события
@@ -37,7 +37,7 @@ const eventController = {
             const { title, description, date, place, userId } = req.body;
 
             if (!title || !date || !place || !userId) {
-                throw new ValidationError('Название, дата, место и userId обязательны');
+                throw new BadRequestError('Название, дата, место и userId обязательны');
             }
 
             const user = await User.findByPk(userId);
