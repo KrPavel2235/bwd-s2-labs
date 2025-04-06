@@ -12,9 +12,17 @@ const userController = {
       }
   },
 
-  async findByEmail(email){
-    return await User.findOne({ where: { email } });
-  },
+  async findByEmail(email) {
+    try {
+        console.log(`Searching for user with email: ${email}`);
+        const user = await User.findOne({ where: { email } });
+        console.log(`User found: ${user}`);
+        return user;
+    } catch (err) {
+        console.error(`Error finding user by email: ${err}`);
+        next(err);
+    }
+},
 
   async getUserById(req, res, next) {
       try {
@@ -34,15 +42,17 @@ const userController = {
   // Создать новое событие
   async createUser(req, res, next) {
       try {
-          const { name, email } = req.body;
+          const { name, email, password } = req.body;
 
-          if (!name || !email ) {
-              throw new BadRequestError('У пользователя должны быть имя и почта!');
+          if (!name || !email || !password ) {
+              throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
           }
 
+          console.log(`Creating user with name: ${name}, email: ${email}`);
           await createUserCheck(email);
 
-          const newUser = await createUsers(name,email);
+          const newUser = await createUsers(name,email,password);
+          console.log(`User created: ${JSON.stringify(newUser)}`);
           res.status(201).json(newUser);
       } catch (err) {
           next(err);

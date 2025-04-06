@@ -11,13 +11,17 @@ if (!JWT_SECRET) {
 
 class AuthService {
   async registerUser(name, email, password) {
+    console.log("опа");
     const existingUser = await userController.findByEmail(email);
     if (existingUser) {
       throw new BadRequestError("Пользователь с таким email уже существует");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("с проверкой email всё ок");
+
+    const hashedPassword = await bcrypt.hash(password, 25);
     return await userController.createUser(name, email, hashedPassword);
+    console.log("всё ок");
   }
 
   async loginUser(email, password) {

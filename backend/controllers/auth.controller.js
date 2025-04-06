@@ -3,6 +3,7 @@ import { BadRequestError } from "../config/error.js";
 
 class AuthController {
   async registerUser(req, res, next) {
+    console.log("Бляяяя Бляяя бюфафыа УФА УФА!");
     try {
       const { name, email, password } = req.body;
 
@@ -11,7 +12,7 @@ class AuthController {
       }
 
       const user = await authService.registerUser(name, email, password);
-      res.status(201).json(user);
+      res.json(user);
     } catch (error) {
       next(error);
     }
