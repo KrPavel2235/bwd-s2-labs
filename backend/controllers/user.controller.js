@@ -6,7 +6,13 @@ const userController = {
   async getAllUsers(req, res, next) {
       try {
           const users = await User.findAll();
-          res.json(users);
+          const usersWithoutPassword = users.map(user => ({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role
+          }));
+          res.json(usersWithoutPassword);
       } catch (err) {
           next(err);
       }
@@ -30,8 +36,13 @@ const userController = {
               throw new NotFoundError('Пользователь не найден');
           }
           
-
-          res.json(user);
+          const userResponse = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role
+          };
+          res.json(userResponse);
       } catch (err) {
           next(err);
       }
@@ -43,7 +54,12 @@ const userController = {
           if (!user) {
               throw new NotFoundError('Пользователь не найден');
           }
-          return user;
+          return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role
+          };
       } catch (err) {
           throw err;
       }
@@ -83,7 +99,6 @@ const userController = {
           console.log("Creating user in database...");
           const newUser = await createUsers(name, email, password);
           
-          // Создаем объект пользователя без пароля
           const userResponse = {
               id: newUser.id,
               name: newUser.name,
@@ -111,7 +126,13 @@ const userController = {
           }
 
           await user.update({ name, email });
-          res.json(user);
+          const userResponse = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role
+          };
+          res.json(userResponse);
       } catch (err) {
           next(err);
       }
@@ -149,7 +170,13 @@ const userController = {
           }
 
           await user.update({ role });
-          res.json({ message: 'Роль пользователя успешно обновлена', user });
+          const userResponse = {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role
+          };
+          res.json({ message: 'Роль пользователя успешно обновлена', user: userResponse });
       } catch (err) {
           next(err);
       }
