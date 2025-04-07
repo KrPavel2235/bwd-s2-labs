@@ -17,7 +17,7 @@ const options = {
 passport.use(
   new Strategy(options, async (payload, done) => {
     try {
-      const user = await userController.getUserById(payload.id);
+      const user = await userController.getUserByIdWithoutRequest(payload.id);
       if (!user) {
         return done(new UnauthorizedError("Пользователь не найден"), false);
       }

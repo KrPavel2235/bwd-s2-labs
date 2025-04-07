@@ -30,7 +30,7 @@ class InternalServerError extends CustomError {
 }
 
 class ForbiddenError extends CustomError {
-  constructor(message = "Forbidden: Invalid API Key") {
+  constructor(message = "Неверный JWT ключ") {
     super(message, 403);
   }
 }

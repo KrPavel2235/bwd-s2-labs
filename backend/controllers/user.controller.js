@@ -1,7 +1,7 @@
 import { createUsers, createUserCheck } from "../services/user.service.js";
 import { BadRequestError, NotFoundError } from "../config/error.js";
 import User from "../models/User.js";
-
+//todo убрать пароли из json Ответов
 const userController = {
   async getAllUsers(req, res, next) {
       try {
@@ -14,13 +14,10 @@ const userController = {
 
   async findByEmail(email) {
     try {
-        console.log(`Searching for user with email: ${email}`);
         const user = await User.findOne({ where: { email } });
-        console.log(`User found: ${user}`);
         return user;
     } catch (err) {
-        console.error(`Error finding user by email: ${err}`);
-        next(err);
+        throw err;
     }
 },
 
@@ -32,10 +29,23 @@ const userController = {
           if (!user) {
               throw new NotFoundError('Пользователь не найден');
           }
+          
 
           res.json(user);
       } catch (err) {
           next(err);
+      }
+  },
+
+  async getUserByIdWithoutRequest(id) {
+      try {
+          const user = await User.findByPk(id);
+          if (!user) {
+              throw new NotFoundError('Пользователь не найден');
+          }
+          return user;
+      } catch (err) {
+          throw err;
       }
   },
 
@@ -48,14 +58,44 @@ const userController = {
               throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
           }
 
-          console.log(`Creating user with name: ${name}, email: ${email}`);
           await createUserCheck(email);
 
           const newUser = await createUsers(name,email,password);
-          console.log(`User created: ${JSON.stringify(newUser)}`);
           res.status(201).json(newUser);
       } catch (err) {
           next(err);
+      }
+  },
+
+  async createUserWithoutRequest(name, email, password) {
+      try {
+          console.log("Starting createUserWithoutRequest with:", { name, email });
+          
+          if (!name || !email || !password) {
+              console.log("Missing required fields");
+              throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
+          }
+
+          console.log("Checking if user exists...");
+          await createUserCheck(email);
+          console.log("User does not exist, proceeding with creation");
+
+          console.log("Creating user in database...");
+          const newUser = await createUsers(name, email, password);
+          
+          // Создаем объект пользователя без пароля
+          const userResponse = {
+              id: newUser.id,
+              name: newUser.name,
+              email: newUser.email,
+              role: newUser.role
+          };
+          
+          console.log("User created successfully:", userResponse);
+          return userResponse;
+      } catch (err) {
+          console.error('Error in createUserWithoutRequest:', err);
+          throw err;
       }
   },
 
@@ -89,6 +129,27 @@ const userController = {
 
           await user.destroy();
           res.json({ message: 'Пользовател ЛИКВИДИРОВАН >=)' });
+      } catch (err) {
+          next(err);
+      }
+  },
+
+  async updateUserRole(req, res, next) {
+      try {
+          const { id } = req.params;
+          const { role } = req.body;
+
+          if (!['user', 'admin'].includes(role)) {
+              throw new BadRequestError('Недопустимая роль пользователя');
+          }
+
+          const user = await User.findByPk(id);
+          if (!user) {
+              throw new NotFoundError('Пользователь не найден');
+          }
+
+          await user.update({ role });
+          res.json({ message: 'Роль пользователя успешно обновлена', user });
       } catch (err) {
           next(err);
       }

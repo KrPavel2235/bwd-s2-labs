@@ -1,6 +1,6 @@
 import Event from '../models/Event.js';
 import User from '../models/User.js';
-import { BadRequestError, NotFoundError } from '../config/error.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '../config/error.js';
 
 const eventController = {
     // Получить все события
@@ -34,18 +34,21 @@ const eventController = {
     // Создать новое событие
     async createEvent(req, res, next) {
         try {
-            const { title, description, date, place, userId } = req.body;
+            const { title, description, date, place } = req.body;
+            const userId = req.user.id;
 
-            if (!title || !date || !place || !userId) {
-                throw new BadRequestError('Название, дата, место и userId обязательны');
+            if (!title || !date || !place) {
+                throw new BadRequestError('Название, дата и место обязательны');
             }
 
-            const user = await User.findByPk(userId);
-            if (!user) {
-                throw new NotFoundError('Пользователь не найден');
-            }
-
-            const newEvent = await Event.create({ title, description, date, place, userId });
+            const newEvent = await Event.create({ 
+                title, 
+                description, 
+                date, 
+                place, 
+                userId 
+            });
+            
             res.status(201).json(newEvent);
         } catch (err) {
             next(err);
@@ -57,10 +60,15 @@ const eventController = {
         try {
             const { id } = req.params;
             const { title, description, date, place } = req.body;
+            const userId = req.user.id;
 
             const event = await Event.findByPk(id);
             if (!event) {
                 throw new NotFoundError('Событие не найдено');
+            }
+
+            if (event.userId !== userId && req.user.role !== 'admin') {
+                throw new ForbiddenError('У вас нет прав для редактирования этого события');
             }
 
             await event.update({ title, description, date, place });
@@ -74,10 +82,15 @@ const eventController = {
     async deleteEvent(req, res, next) {
         try {
             const { id } = req.params;
-            const event = await Event.findByPk(id);
+            const userId = req.user.id;
 
+            const event = await Event.findByPk(id);
             if (!event) {
                 throw new NotFoundError('Событие не найдено');
+            }
+
+            if (event.userId !== userId && req.user.role !== 'admin') {
+                throw new ForbiddenError('У вас нет прав для удаления этого события');
             }
 
             await event.destroy();

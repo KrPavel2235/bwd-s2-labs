@@ -3,7 +3,7 @@ import { BadRequestError } from "../config/error.js";
 
 class AuthController {
   async registerUser(req, res, next) {
-    console.log("Бляяяя Бляяя бюфафыа УФА УФА!");
+    console.log("итак я тут запускаюсь");
     try {
       const { name, email, password } = req.body;
 
