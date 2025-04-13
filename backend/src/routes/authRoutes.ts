@@ -1,7 +1,8 @@
-import express from "express";
-import AuthController from "../controllers/auth.controller.js";
+import express, { Router } from 'express';
+import AuthController from '../controllers/auth.controller.js';
 
-const router = express.Router();
+const router: Router = express.Router();
+
 /**
  * @swagger
  * /auth/register:
@@ -31,7 +32,8 @@ const router = express.Router();
  *       400:
  *         description: Ошибка валидации
  */
-router.post("/register", AuthController.registerUser);
+router.post('/register', AuthController.registerUser);
+
 /**
  * @swagger
  * /auth/login:
@@ -58,6 +60,6 @@ router.post("/register", AuthController.registerUser);
  *       401:
  *         description: Неверные пароль или email
  */
-router.post("/login", AuthController.loginUser);
+router.post('/login', AuthController.loginUser);
 
-export default router;
+export default router; 

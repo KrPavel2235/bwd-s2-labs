@@ -1,32 +1,30 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
-dotenv.config(); // окружение из env
+dotenv.config();
 
-//загрузука переменных из env
 const sequelize = new Sequelize(
-    process.env.DB_NAME, 
-    process.env.DB_USER, 
-    process.env.DB_PASSWORD, 
-    {
-      host: process.env.DB_HOST, 
-      port: process.env.DB_PORT, 
-      dialect: 'postgres', 
-    }
-  );
+  process.env.DB_NAME || 'event_management',
+  process.env.DB_USER || 'root',
+  process.env.DB_PASSWORD || '',
+  {
+    host: process.env.DB_HOST || 'localhost',
+    dialect: 'mysql',
+    logging: false,
+  }
+);
 
-
-  // Тест подключения к БД todo db
-export async function testDatabaseConnection() {
+export async function testDatabaseConnection(): Promise<void> {
   try {
     await sequelize.authenticate();
     console.log('Подключение к базе данных успешно установлено.');
   } catch (error) {
     console.error('Ошибка подключения к базе данных:', error);
+    throw error;
   }
 }
 
-export async function syncDatabase(force = false) {
+export async function syncDatabase(force = false): Promise<void> {
   try {
     await sequelize.sync({ force });
     console.log(`База данных успешно синхронизирована. Force mode: ${force}`);
@@ -35,6 +33,5 @@ export async function syncDatabase(force = false) {
     throw error;
   }
 }
-
 
 export default sequelize; 
