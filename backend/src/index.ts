@@ -1,13 +1,14 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerSetup from './config/swagger.js';
-import { syncDatabase, testDatabaseConnection } from './config/db.js';
+import { syncDatabase, testDatabaseConnection } from './config/database.js';
 import errorMiddleware from './middleware/errorMiddleware.js';
 import passport from './config/passport.js';
 import router from './routes/router.js';
 import authRoutes from './routes/authRoutes.js';
 import morgan from 'morgan';
+import { defineAssociations } from './models/associations.js';
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ const app: Express = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
+
+// Инициализация моделей и их ассоциаций
+defineAssociations();
 
 // Инициализация базы данных
 testDatabaseConnection()

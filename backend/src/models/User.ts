@@ -1,6 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js';
-import { Event } from './Event.js';
 
 export interface UserAttributes {
   id?: number;
@@ -56,8 +55,4 @@ User.init(
     modelName: 'User',
     tableName: 'users',
   }
-);
-
-// Define associations
-User.hasMany(Event);
-Event.belongsTo(User); 
+); 

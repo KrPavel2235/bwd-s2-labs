@@ -1,8 +1,7 @@
 import { Model, DataTypes, Optional } from 'sequelize';
-import sequelize from '../config/db.js';
-import { User } from './User.js';
+import { sequelize } from '../config/database.js';
 
-interface EventAttributes {
+export interface EventAttributes {
   id: number;
   title: string;
   description?: string;
@@ -11,9 +10,9 @@ interface EventAttributes {
   userId: number;
 }
 
-interface EventCreationAttributes extends Optional<EventAttributes, 'id'> {}
+export interface EventCreationAttributes extends Optional<EventAttributes, 'id'> {}
 
-class Event extends Model<EventAttributes, EventCreationAttributes> implements EventAttributes {
+export class Event extends Model<EventAttributes, EventCreationAttributes> implements EventAttributes {
   public id!: number;
   public title!: string;
   public description!: string;
@@ -23,9 +22,6 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-
-  // Связи
-  public readonly user?: User;
 }
 
 Event.init(
@@ -59,10 +55,4 @@ Event.init(
     sequelize,
     tableName: 'events',
   }
-);
-
-// Связи
-Event.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-User.hasMany(Event, { foreignKey: 'userId', as: 'events' });
-
-export { Event, EventAttributes, EventCreationAttributes }; 
+); 
