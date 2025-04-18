@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import authService from '../services/auth.service.js';
-import { BadRequestError } from '../config/error.js';
+import authService from '@services/auth.service';
+import { BadRequestError } from '@config/error';
 
 interface RegisterRequestBody {
   name: string;
@@ -15,11 +15,10 @@ interface LoginRequestBody {
 
 class AuthController {
   async registerUser(
-    req: Request<{}, {}, RegisterRequestBody>,
+    req: Request<Record<string, never>, Record<string, never>, RegisterRequestBody>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    console.log('итак я тут запускаюсь');
     try {
       const { name, email, password } = req.body;
 
@@ -35,7 +34,7 @@ class AuthController {
   }
 
   async loginUser(
-    req: Request<{}, {}, LoginRequestBody>,
+    req: Request<Record<string, never>, Record<string, never>, LoginRequestBody>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
@@ -54,4 +53,4 @@ class AuthController {
   }
 }
 
-export default new AuthController(); 
+export default new AuthController();

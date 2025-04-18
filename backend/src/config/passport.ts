@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, VerifiedCallback } from 'passport-jwt';
-import userController from '../controllers/user.controller.js';
-import { UnauthorizedError } from '../config/error.js';
+import userController from '@controllers/user.controller';
+import { UnauthorizedError } from '@config/error';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -32,4 +32,4 @@ passport.use(
   })
 );
 
-export default passport; 
+export default passport;

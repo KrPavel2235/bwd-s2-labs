@@ -1,7 +1,14 @@
-import { User } from './User.js';
-import { Event } from './Event.js';
+import { User } from '@models/User';
+import { Event } from '@models/Event';
 
 export function defineAssociations(): void {
-  User.hasMany(Event);
-  Event.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-} 
+  User.hasMany(Event, {
+    foreignKey: 'userId',
+    as: 'events',
+  });
+
+  Event.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+}

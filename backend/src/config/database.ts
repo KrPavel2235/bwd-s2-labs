@@ -32,4 +32,4 @@ export async function syncDatabase(force = false): Promise<void> {
     console.error('Ошибка синхронизации базы данных:', error);
     throw error;
   }
-} 
+}

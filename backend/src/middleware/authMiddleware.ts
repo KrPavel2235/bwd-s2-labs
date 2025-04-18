@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { ForbiddenError } from '../config/error.js';
+import { ForbiddenError } from '@config/error';
 
 interface UserRequest extends Request {
   user?: {
@@ -9,11 +9,7 @@ interface UserRequest extends Request {
   };
 }
 
-const authMiddleware = (
-  req: UserRequest,
-  _res: Response,
-  next: NextFunction
-): void => {
+const authMiddleware = (req: UserRequest, _res: Response, next: NextFunction): void => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
@@ -32,4 +28,4 @@ const authMiddleware = (
   }
 };
 
-export default authMiddleware; 
+export default authMiddleware;

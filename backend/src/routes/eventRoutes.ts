@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import eventController from '../controllers/event.controller.js';
-import passport from "passport";
-import { isUser } from '../middleware/roleMiddleware.js';
+import eventController from '@controllers/event.controller';
+import passport from 'passport';
+import { isUser } from '@middleware/roleMiddleware';
 
 const router = Router();
 
@@ -43,7 +43,12 @@ router.get('/', eventController.getAllEvents);
  *       404:
  *         description: Событие не найдено
  */
-router.get('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.getEventById);
+router.get(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.getEventById
+);
 
 /**
  * @swagger
@@ -81,7 +86,12 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), isUser, eve
  *       400:
  *         description: Ошибка валидации
  */
-router.post('/', passport.authenticate('jwt', { session: false }), isUser, eventController.createEvent);
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.createEvent
+);
 
 /**
  * @swagger
@@ -115,7 +125,12 @@ router.post('/', passport.authenticate('jwt', { session: false }), isUser, event
  *       404:
  *         description: Событие не найдено
  */
-router.put('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.updateEvent);
+router.put(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.updateEvent
+);
 
 /**
  * @swagger
@@ -136,6 +151,11 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), isUser, eve
  *       404:
  *         description: Событие не найдено
  */
-router.delete('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.deleteEvent);
+router.delete(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.deleteEvent
+);
 
 export default router;

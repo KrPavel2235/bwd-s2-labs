@@ -1,5 +1,5 @@
 import { Model, DataTypes, Optional } from 'sequelize';
-import { sequelize } from '../config/database.js';
+import { sequelize } from '@config/database';
 
 export interface EventAttributes {
   id: number;
@@ -12,16 +12,19 @@ export interface EventAttributes {
 
 export interface EventCreationAttributes extends Optional<EventAttributes, 'id'> {}
 
-export class Event extends Model<EventAttributes, EventCreationAttributes> implements EventAttributes {
-  public id!: number;
-  public title!: string;
-  public description!: string;
-  public date!: Date;
-  public place!: string;
-  public userId!: number;
+export class Event
+  extends Model<EventAttributes, EventCreationAttributes>
+  implements EventAttributes
+{
+  declare id: number;
+  declare title: string;
+  declare description: string;
+  declare date: Date;
+  declare place: string;
+  declare userId: number;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 Event.init(
@@ -55,4 +58,4 @@ Event.init(
     sequelize,
     tableName: 'events',
   }
-); 
+);

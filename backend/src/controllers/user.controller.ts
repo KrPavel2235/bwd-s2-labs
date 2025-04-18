@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { createUsers, createUserCheck } from '../services/user.service.js';
-import { BadRequestError, NotFoundError } from '../config/error.js';
-import { User } from '../models/User.js';
+import { createUsers, createUserCheck } from '@services/user.service';
+import { BadRequestError, NotFoundError } from '@config/error';
+import { User } from '@models/User';
 
 interface UserResponse {
   id: number;
@@ -29,11 +29,11 @@ const userController = {
   async getAllUsers(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const users = await User.findAll();
-      const usersWithoutPassword = users.map(user => ({
+      const usersWithoutPassword = users.map((user) => ({
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
       }));
       res.json(usersWithoutPassword);
     } catch (err) {
@@ -58,12 +58,12 @@ const userController = {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      
+
       const userResponse: UserResponse = {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
       };
       res.json(userResponse);
     } catch (err) {
@@ -81,14 +81,18 @@ const userController = {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
       };
     } catch (err) {
       throw err;
     }
   },
 
-  async createUser(req: Request<{}, {}, CreateUserRequest>, res: Response, next: NextFunction): Promise<void> {
+  async createUser(
+    req: Request<Record<string, never>, Record<string, never>, CreateUserRequest>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { name, email, password } = req.body;
 
@@ -105,10 +109,14 @@ const userController = {
     }
   },
 
-  async createUserWithoutRequest(name: string, email: string, password: string): Promise<UserResponse> {
+  async createUserWithoutRequest(
+    name: string,
+    email: string,
+    password: string
+  ): Promise<UserResponse> {
     try {
       console.log('Starting createUserWithoutRequest with:', { name, email });
-      
+
       if (!name || !email || !password) {
         console.log('Missing required fields');
         throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
@@ -120,14 +128,14 @@ const userController = {
 
       console.log('Creating user in database...');
       const newUser = await createUsers(name, email, password);
-      
+
       const userResponse: UserResponse = {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
       };
-      
+
       console.log('User created successfully:', userResponse);
       return userResponse;
     } catch (err) {
@@ -137,7 +145,7 @@ const userController = {
   },
 
   async updateUser(
-    req: Request<{ id: string }, {}, UpdateUserRequest>,
+    req: Request<{ id: string }, Record<string, never>, UpdateUserRequest>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
@@ -155,7 +163,7 @@ const userController = {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
       };
       res.json(userResponse);
     } catch (err) {
@@ -180,7 +188,7 @@ const userController = {
   },
 
   async updateUserRole(
-    req: Request<{ id: string }, {}, UpdateRoleRequest>,
+    req: Request<{ id: string }, Record<string, never>, UpdateRoleRequest>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
@@ -202,13 +210,13 @@ const userController = {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
       };
       res.json({ message: 'Роль пользователя успешно обновлена', user: userResponse });
     } catch (err) {
       next(err);
     }
-  }
+  },
 };
 
-export default userController; 
+export default userController;

@@ -1,14 +1,14 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import swaggerSetup from './config/swagger.js';
-import { syncDatabase, testDatabaseConnection } from './config/database.js';
-import errorMiddleware from './middleware/errorMiddleware.js';
-import passport from './config/passport.js';
-import router from './routes/router.js';
-import authRoutes from './routes/authRoutes.js';
+import swaggerSetup from '@config/swagger';
+import { syncDatabase, testDatabaseConnection } from '@config/database';
+import errorMiddleware from '@middleware/errorMiddleware';
+import passport from '@config/passport';
+import router from '@routes/router';
+import authRoutes from '@routes/authRoutes';
 import morgan from 'morgan';
-import { defineAssociations } from './models/associations.js';
+import { defineAssociations } from '@models/associations';
 
 dotenv.config();
 
@@ -56,4 +56,4 @@ server.on('error', (error: NodeJS.ErrnoException) => {
   } else {
     console.error('Произошла ошибка при запуске сервера:', error);
   }
-}); 
+});

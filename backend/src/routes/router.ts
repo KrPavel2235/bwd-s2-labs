@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from 'express';
-import eventRouter from '../routes/eventRoutes.js';
-import userRouter from '../routes/userRoutes.js';
+import eventRouter from '@routes/eventRoutes';
+import userRouter from '@routes/userRoutes';
 
 const router: Router = express.Router();
 
@@ -12,4 +12,4 @@ router.get('/', (_req: Request, res: Response) => {
 router.use('/events', eventRouter);
 router.use('/users', userRouter);
 
-export default router; 
+export default router;

@@ -1,5 +1,5 @@
-import { User } from '../models/User.js';
-import { CustomError } from '../config/error.js';
+import { User } from '@models/User';
+import { CustomError } from '@config/error';
 
 interface UserResponse {
   id: number;
@@ -15,23 +15,26 @@ export async function createUserCheck(email: string): Promise<void> {
   }
 }
 
-export async function createUsers(name: string, email: string, password: string): Promise<UserResponse> {
+export async function createUsers(
+  name: string,
+  email: string,
+  password: string
+): Promise<UserResponse> {
   try {
-    const user = await User.create({ 
-      name, 
-      email, 
+    const user = await User.create({
+      name,
+      email,
       password,
-      role: 'user'
+      role: 'user',
     });
     const userResponse: UserResponse = {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
     };
     return userResponse;
   } catch (error) {
     throw new CustomError('Ошибка при создании пользователя', 500);
   }
 }
- 

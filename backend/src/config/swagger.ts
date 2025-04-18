@@ -40,4 +40,4 @@ const swaggerSetup = (app: Express): void => {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 };
 
-export default swaggerSetup; 
+export default swaggerSetup;

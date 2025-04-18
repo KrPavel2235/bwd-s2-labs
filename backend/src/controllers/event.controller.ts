@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { Event, EventAttributes } from '../models/Event.js';
-import { User } from '../models/User.js';
-import { BadRequestError, NotFoundError, ForbiddenError } from '../config/error.js';
+import { Event, EventAttributes } from '@models/Event';
+import { User } from '@models/User';
+import { NotFoundError, ForbiddenError } from '@config/error';
 
 type CreateEventRequest = Omit<EventAttributes, 'id' | 'userId'> & {
   date: string;
@@ -9,12 +9,7 @@ type CreateEventRequest = Omit<EventAttributes, 'id' | 'userId'> & {
 
 type UpdateEventRequest = Partial<CreateEventRequest>;
 
-interface UserRequest extends Request {
-  user: {
-    id: string;
-    role: string;
-  };
-}
+
 
 const eventController = {
   // Получить все события
@@ -30,7 +25,11 @@ const eventController = {
   },
 
   // Получить событие по ID
-  async getEventById(req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> {
+  async getEventById(
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const event = await Event.findByPk(id, {
@@ -49,7 +48,7 @@ const eventController = {
 
   // Создать новое событие
   async createEvent(
-    req: Request<{}, {}, CreateEventRequest>,
+    req: Request<Record<string, never>, Record<string, never>, CreateEventRequest>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
@@ -77,7 +76,7 @@ const eventController = {
 
   // Обновить событие
   async updateEvent(
-    req: Request<{ id: string }, {}, UpdateEventRequest>,
+    req: Request<{ id: string }, Record<string, never>, UpdateEventRequest>,
     res: Response,
     next: NextFunction
   ): Promise<void> {
@@ -144,4 +143,4 @@ const eventController = {
   },
 };
 
-export default eventController; 
+export default eventController;

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import userController from '../controllers/user.controller.js';
+import userController from '@controllers/user.controller';
 import passport from 'passport';
-import { isAdmin } from '../middleware/roleMiddleware.js';
+import { isAdmin } from '@middleware/roleMiddleware';
 
 const router = Router();
 
@@ -26,7 +26,12 @@ const router = Router();
  *       403:
  *         description: Недостаточно прав
  */
-router.get('/', passport.authenticate('jwt', { session: false }), isAdmin, userController.getAllUsers);
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.getAllUsers
+);
 
 /**
  * @swagger
@@ -51,7 +56,12 @@ router.get('/', passport.authenticate('jwt', { session: false }), isAdmin, userC
  *       404:
  *         description: Пользователь не найден
  */
-router.get('/:id', passport.authenticate('jwt', { session: false }), isAdmin, userController.getUserById);
+router.get(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.getUserById
+);
 
 /**
  * @swagger
@@ -82,7 +92,12 @@ router.get('/:id', passport.authenticate('jwt', { session: false }), isAdmin, us
  *       400:
  *         description: Ошибка валидации
  */
-router.post('/',passport.authenticate('jwt', { session: false }), isAdmin, userController.createUser);
+router.post(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.createUser
+);
 
 /**
  * @swagger
@@ -116,7 +131,12 @@ router.post('/',passport.authenticate('jwt', { session: false }), isAdmin, userC
  *       404:
  *         description: Пользователь не найден
  */
-router.put('/:id',passport.authenticate('jwt', { session: false }), isAdmin, userController.updateUser);
+router.put(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.updateUser
+);
 
 /**
  * @swagger
@@ -137,7 +157,12 @@ router.put('/:id',passport.authenticate('jwt', { session: false }), isAdmin, use
  *       404:
  *         description: Пользователь не найден
  */
-router.delete('/:id',passport.authenticate('jwt', { session: false }), isAdmin, userController.deleteUser);
+router.delete(
+  '/:id',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.deleteUser
+);
 
 /**
  * @swagger
@@ -173,6 +198,11 @@ router.delete('/:id',passport.authenticate('jwt', { session: false }), isAdmin, 
  *       404:
  *         description: Пользователь не найден
  */
-router.patch('/:id/role', passport.authenticate('jwt', { session: false }), isAdmin, userController.updateUserRole);
+router.patch(
+  '/:id/role',
+  passport.authenticate('jwt', { session: false }),
+  isAdmin,
+  userController.updateUserRole
+);
 
 export default router;

@@ -1,15 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import userController from '../controllers/user.controller.js';
-import { BadRequestError, UnauthorizedError } from '../config/error.js';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}
+import userController from '@controllers/user.controller';
+import { BadRequestError, UnauthorizedError } from '@config/error';
 
 interface UserResponse {
   id: number;
@@ -34,26 +26,22 @@ if (!JWT_SECRET) {
 
 class AuthService {
   async registerUser(name: string, email: string, password: string): Promise<AuthResponse> {
-    try {
-      const existingUser = await userController.findByEmail(email);
-      if (existingUser) {
-        throw new BadRequestError('Пользователь с таким email уже существует');
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await userController.createUserWithoutRequest(name, email, hashedPassword);
-      
-      const userResponse: UserResponse = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      };
-      
-      return { user: userResponse };
-    } catch (error) {
-      throw error;
+    const existingUser = await userController.findByEmail(email);
+    if (existingUser) {
+      throw new BadRequestError('Пользователь с таким email уже существует');
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await userController.createUserWithoutRequest(name, email, hashedPassword);
+
+    const userResponse: UserResponse = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    return { user: userResponse };
   }
 
   async loginUser(email: string, password: string): Promise<TokenResponse> {
@@ -67,13 +55,10 @@ class AuthService {
       throw new UnauthorizedError('Неверный email или пароль');
     }
 
-    const accessToken = jwt.sign(
-      { id: user.id, email: user.email, name: user.name },
-      JWT_SECRET
-    );
+    const accessToken = jwt.sign({ id: user.id, email: user.email, name: user.name }, JWT_SECRET);
 
     return { accessToken };
   }
 }
 
-export default new AuthService(); 
+export default new AuthService();

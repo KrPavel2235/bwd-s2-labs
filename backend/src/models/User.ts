@@ -1,5 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../config/database.js';
+import { sequelize } from '@config/database';
 
 export interface UserAttributes {
   id?: number;
@@ -12,13 +12,13 @@ export interface UserAttributes {
 }
 
 export class User extends Model<UserAttributes> implements UserAttributes {
-  public id!: number;
-  public name!: string;
-  public email!: string;
-  public password!: string;
-  public role!: 'admin' | 'user';
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare name: string;
+  declare email: string;
+  declare password: string;
+  declare role: 'admin' | 'user';
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 User.init(
@@ -55,4 +55,4 @@ User.init(
     modelName: 'User',
     tableName: 'users',
   }
-); 
+);

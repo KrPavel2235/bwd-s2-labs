@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { BadRequestError, NotFoundError, ForbiddenError } from '../config/error.js';
+import { BadRequestError, NotFoundError, ForbiddenError } from '@config/error';
 
 interface ErrorResponse {
   message: string;
@@ -7,12 +7,7 @@ interface ErrorResponse {
   errors?: string[];
 }
 
-const errorMiddleware = (
-  err: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-): void => {
+const errorMiddleware = (err: Error, _req: Request, res: Response, _next: NextFunction): void => {
   let errorResponse: ErrorResponse = {
     message: 'Internal Server Error',
     status: 500,
@@ -39,4 +34,4 @@ const errorMiddleware = (
   res.status(errorResponse.status).json(errorResponse);
 };
 
-export default errorMiddleware; 
+export default errorMiddleware;

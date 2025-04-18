@@ -11,7 +11,14 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@models/*": ["models/*.js"],
+      "@controllers/*": ["controllers/*.js"],
+      "@routes/*": ["routes/*.js"],
+      "@config/*": ["config/*.js"],
+      "@middleware/*": ["middleware/*.js"],
+      "@services/*": ["services/*.js"],
+      "@types/*": ["types/*.js"]
     }
   },
   "include": ["src/**/*"],
