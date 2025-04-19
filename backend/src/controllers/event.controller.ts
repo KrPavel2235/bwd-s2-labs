@@ -9,8 +9,6 @@ type CreateEventRequest = Omit<EventAttributes, 'id' | 'userId'> & {
 
 type UpdateEventRequest = Partial<CreateEventRequest>;
 
-
-
 const eventController = {
   // Получить все события
   async getAllEvents(_req: Request, res: Response, next: NextFunction): Promise<void> {

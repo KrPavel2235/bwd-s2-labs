@@ -42,12 +42,8 @@ const userController = {
   },
 
   async findByEmail(email: string): Promise<User | null> {
-    try {
-      const user = await User.findOne({ where: { email } });
-      return user;
-    } catch (err) {
-      throw err;
-    }
+    const user = await User.findOne({ where: { email } });
+    return user;
   },
 
   async getUserById(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -72,20 +68,16 @@ const userController = {
   },
 
   async getUserByIdWithoutRequest(id: number): Promise<UserResponse> {
-    try {
-      const user = await User.findByPk(id);
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      };
-    } catch (err) {
-      throw err;
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new NotFoundError('Пользователь не найден');
     }
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
   },
 
   async createUser(
@@ -114,34 +106,29 @@ const userController = {
     email: string,
     password: string
   ): Promise<UserResponse> {
-    try {
-      console.log('Starting createUserWithoutRequest with:', { name, email });
+    console.log('Starting createUserWithoutRequest with:', { name, email });
 
-      if (!name || !email || !password) {
-        console.log('Missing required fields');
-        throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
-      }
-
-      console.log('Checking if user exists...');
-      await createUserCheck(email);
-      console.log('User does not exist, proceeding with creation');
-
-      console.log('Creating user in database...');
-      const newUser = await createUsers(name, email, password);
-
-      const userResponse: UserResponse = {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-      };
-
-      console.log('User created successfully:', userResponse);
-      return userResponse;
-    } catch (err) {
-      console.error('Error in createUserWithoutRequest:', err);
-      throw err;
+    if (!name || !email || !password) {
+      console.log('Missing required fields');
+      throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
     }
+
+    console.log('Checking if user exists...');
+    await createUserCheck(email);
+    console.log('User does not exist, proceeding with creation');
+
+    console.log('Creating user in database...');
+    const newUser = await createUsers(name, email, password);
+
+    const userResponse: UserResponse = {
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+    };
+
+    console.log('User created successfully:', userResponse);
+    return userResponse;
   },
 
   async updateUser(
@@ -154,11 +141,16 @@ const userController = {
       const { name, email } = req.body;
 
       const user = await User.findByPk(id);
+
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
 
-      await user.update({ name, email });
+      await user.update({
+        name: name || user.name,
+        email: email || user.email,
+      });
+
       const userResponse: UserResponse = {
         id: user.id,
         name: user.name,
@@ -181,7 +173,7 @@ const userController = {
       }
 
       await user.destroy();
-      res.json({ message: 'Пользовател ЛИКВИДИРОВАН >=)' });
+      res.status(204).send();
     } catch (err) {
       next(err);
     }
@@ -196,23 +188,21 @@ const userController = {
       const { id } = req.params;
       const { role } = req.body;
 
-      if (!['user', 'admin'].includes(role)) {
-        throw new BadRequestError('Недопустимая роль пользователя');
-      }
-
       const user = await User.findByPk(id);
+
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
 
       await user.update({ role });
+
       const userResponse: UserResponse = {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
       };
-      res.json({ message: 'Роль пользователя успешно обновлена', user: userResponse });
+      res.json(userResponse);
     } catch (err) {
       next(err);
     }
