@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import eventController from '../controllers/event.controller.js';
+import passport from "passport";
+import { isUser } from '../middleware/roleMiddleware.js';
 
 const router = Router();
 
@@ -41,7 +43,7 @@ router.get('/', eventController.getAllEvents);
  *       404:
  *         description: Событие не найдено
  */
-router.get('/:id', eventController.getEventById);
+router.get('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.getEventById);
 
 /**
  * @swagger
@@ -79,7 +81,7 @@ router.get('/:id', eventController.getEventById);
  *       400:
  *         description: Ошибка валидации
  */
-router.post('/', eventController.createEvent);
+router.post('/', passport.authenticate('jwt', { session: false }), isUser, eventController.createEvent);
 
 /**
  * @swagger
@@ -113,7 +115,7 @@ router.post('/', eventController.createEvent);
  *       404:
  *         description: Событие не найдено
  */
-router.put('/:id', eventController.updateEvent);
+router.put('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.updateEvent);
 
 /**
  * @swagger
@@ -134,6 +136,6 @@ router.put('/:id', eventController.updateEvent);
  *       404:
  *         description: Событие не найдено
  */
-router.delete('/:id', eventController.deleteEvent);
+router.delete('/:id', passport.authenticate('jwt', { session: false }), isUser, eventController.deleteEvent);
 
 export default router;

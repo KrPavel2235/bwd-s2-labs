@@ -4,17 +4,34 @@ import dotenv from 'dotenv';
 import swaggerSetup from './config/swagger.js';
 import { syncDatabase, testDatabaseConnection}  from './config/db.js';
 import errorMiddlerware from './middleware/errorMiddlerware.js';
-import router from './routes/router.js'
+import passport from './config/passport.js';
+import router from './routes/router.js';
+import authRoutes from "./routes/authRoutes.js";
 import morgan from 'morgan';
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
-testDatabaseConnection();
-app.use(errorMiddlerware);
+app.use(morgan('dev'));
+
+// Инициализация базы данных
+testDatabaseConnection()
+  .then(() => syncDatabase(false))
+  .catch(err => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });
+
+// Инициализация Passport
+app.use(passport.initialize());
+
+// Маршруты
+app.use("/auth", authRoutes);
 app.use(router);
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+
+// Обработка ошибок
+app.use(errorMiddlerware);
 
 // todo документация свагера к каждому маршруту
 // Подключение Swagger
@@ -36,5 +53,3 @@ server.on('error', (error) => {
     console.error('Произошла ошибка при запуске сервера:', error);
   }
 });
-
-syncDatabase();

@@ -26,12 +26,13 @@ export async function testDatabaseConnection() {
   }
 }
 
-export async function syncDatabase() {
+export async function syncDatabase(force = false) {
   try {
-    await sequelize.sync({ force: true }); // { force: true } для разработки
-    console.log('База данных успешно синхронизирована.');
+    await sequelize.sync({ force });
+    console.log(`База данных успешно синхронизирована. Force mode: ${force}`);
   } catch (error) {
     console.error('Ошибка синхронизации базы данных:', error);
+    throw error;
   }
 }
 

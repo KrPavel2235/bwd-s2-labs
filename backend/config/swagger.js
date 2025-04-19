@@ -15,6 +15,20 @@ const swaggerOptions = {
                 description: 'Локальный сервер',
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
     apis: ['./routes/*.js'], // Пути к файлам с аннотациями
 };

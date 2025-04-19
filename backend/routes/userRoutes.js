@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import userController from '../controllers/user.controller.js';
+import passport from 'passport';
+import { isAdmin } from '../middleware/roleMiddleware.js';
 
 const router = Router();
 
@@ -14,20 +16,26 @@ const router = Router();
  * @swagger
  * /users:
  *   get:
- *     summary: Получить всех пользователей
+ *     summary: Получить всех пользователей (только для админов)
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Список пользователей
+ *       403:
+ *         description: Недостаточно прав
  */
-router.get('/', userController.getAllUsers);
+router.get('/', passport.authenticate('jwt', { session: false }), isAdmin, userController.getAllUsers);
 
 /**
  * @swagger
  * /users/{id}:
  *   get:
- *     summary: Получить пользователя по ID
+ *     summary: Получить пользователя по ID (только для админов)
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -38,10 +46,12 @@ router.get('/', userController.getAllUsers);
  *     responses:
  *       200:
  *         description: Данные пользователя
+ *       403:
+ *         description: Недостаточно прав
  *       404:
  *         description: Пользователь не найден
  */
-router.get('/:id', userController.getUserById);
+router.get('/:id', passport.authenticate('jwt', { session: false }), isAdmin, userController.getUserById);
 
 /**
  * @swagger
@@ -63,13 +73,16 @@ router.get('/:id', userController.getUserById);
  *               email:
  *                 type: string
  *                 example: "ivan@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "123"
  *     responses:
  *       201:
  *         description: Пользователь создан
  *       400:
  *         description: Ошибка валидации
  */
-router.post('/', userController.createUser);
+router.post('/',passport.authenticate('jwt', { session: false }), isAdmin, userController.createUser);
 
 /**
  * @swagger
@@ -103,7 +116,7 @@ router.post('/', userController.createUser);
  *       404:
  *         description: Пользователь не найден
  */
-router.put('/:id', userController.updateUser);
+router.put('/:id',passport.authenticate('jwt', { session: false }), isAdmin, userController.updateUser);
 
 /**
  * @swagger
@@ -124,6 +137,42 @@ router.put('/:id', userController.updateUser);
  *       404:
  *         description: Пользователь не найден
  */
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id',passport.authenticate('jwt', { session: false }), isAdmin, userController.deleteUser);
+
+/**
+ * @swagger
+ * /users/{id}/role:
+ *   patch:
+ *     summary: Изменить роль пользователя (только для админов)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID пользователя
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [role]
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [user, admin]
+ *     responses:
+ *       200:
+ *         description: Роль пользователя изменена
+ *       403:
+ *         description: Недостаточно прав
+ *       404:
+ *         description: Пользователь не найден
+ */
+router.patch('/:id/role', passport.authenticate('jwt', { session: false }), isAdmin, userController.updateUserRole);
 
 export default router;
