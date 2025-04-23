@@ -44,7 +44,6 @@ class ForbiddenError extends CustomError {
 }
 
 const handleError = (res: Response, error: Error | CustomError, defaultMessage?: string): void => {
-  console.log(defaultMessage || error);
   const statusCode = (error as CustomError).statusCode || 500;
   res.status(statusCode).json({ error: error.message || defaultMessage });
 };

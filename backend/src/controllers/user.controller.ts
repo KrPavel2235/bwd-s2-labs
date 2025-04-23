@@ -106,18 +106,12 @@ const userController = {
     email: string,
     password: string
   ): Promise<UserResponse> {
-    console.log('Starting createUserWithoutRequest with:', { name, email });
-
     if (!name || !email || !password) {
-      console.log('Missing required fields');
       throw new BadRequestError('У пользователя должны быть имя почта и пароль!');
     }
 
-    console.log('Checking if user exists...');
     await createUserCheck(email);
-    console.log('User does not exist, proceeding with creation');
 
-    console.log('Creating user in database...');
     const newUser = await createUsers(name, email, password);
 
     const userResponse: UserResponse = {
@@ -127,7 +121,6 @@ const userController = {
       role: newUser.role,
     };
 
-    console.log('User created successfully:', userResponse);
     return userResponse;
   },
 
