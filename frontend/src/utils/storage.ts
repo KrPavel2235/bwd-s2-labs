@@ -1,8 +1,4 @@
-/**
- * Save data to localStorage
- * @param key - The key to store the data under
- * @param value - The data to store
- */
+
 export const saveToStorage = <T>(key: string, value: T): void => {
   try {
     const serializedValue = JSON.stringify(value);
@@ -12,11 +8,6 @@ export const saveToStorage = <T>(key: string, value: T): void => {
   }
 };
 
-/**
- * Retrieve data from localStorage
- * @param key - The key to retrieve the data from
- * @returns The retrieved data or null if not found
- */
 export const getFromStorage = <T>(key: string): T | null => {
   try {
     const serializedValue = localStorage.getItem(key);
@@ -30,10 +21,6 @@ export const getFromStorage = <T>(key: string): T | null => {
   }
 };
 
-/**
- * Remove data from localStorage
- * @param key - The key to remove the data from
- */
 export const removeFromStorage = (key: string): void => {
   try {
     localStorage.removeItem(key);
@@ -42,9 +29,6 @@ export const removeFromStorage = (key: string): void => {
   }
 };
 
-/**
- * Clear all data from localStorage
- */
 export const clearStorage = (): void => {
   try {
     localStorage.clear();

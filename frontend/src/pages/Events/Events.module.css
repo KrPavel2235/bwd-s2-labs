@@ -1,26 +1,24 @@
 .container {
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #ddd;
+  margin-bottom: 30px;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 20px;
 }
 
 .logoutButton {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   background-color: #dc3545;
   color: white;
   border: none;
@@ -34,8 +32,8 @@
 
 .error {
   color: #dc3545;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  margin-bottom: 20px;
+  padding: 10px;
   background-color: #f8d7da;
   border-radius: 4px;
 }
@@ -43,35 +41,92 @@
 .eventsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: 20px;
 }
 
 .eventCard {
-  background-color: white;
+  padding: 20px;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s;
-}
-
-.eventCard:hover {
-  transform: translateY(-5px);
 }
 
 .eventCard h3 {
-  margin: 0 0 1rem 0;
+  margin: 0 0 10px 0;
   color: #333;
 }
 
 .eventCard p {
+  margin: 0 0 15px 0;
   color: #666;
-  margin-bottom: 1rem;
 }
 
 .eventDetails {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  color: #666;
-  font-size: 0.9rem;
+  gap: 8px;
+  margin-top: 15px;
+  color: #555;
+}
+
+.eventDetails span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mapContainer {
+  margin-top: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .userInfo {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .eventsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .eventCard {
+    padding: 15px;
+  }
+
+  .mapContainer {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .eventCard {
+    padding: 12px;
+  }
+
+  .eventDetails {
+    font-size: 0.9em;
+  }
+
+  .mapContainer {
+    margin-top: 8px;
+  }
 } 

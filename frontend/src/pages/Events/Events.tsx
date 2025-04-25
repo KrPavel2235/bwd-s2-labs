@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Events.module.css';
+import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 
 interface Event {
   id: number;
@@ -8,11 +9,13 @@ interface Event {
   description: string;
   date: string;
   location: string;
+  userId: number;
 }
 
 interface User {
   name: string;
   email: string;
+  id: number;
 }
 
 const Events: React.FC = () => {
@@ -80,8 +83,27 @@ const Events: React.FC = () => {
             <div className={styles.eventDetails}>
               <span>Дата: {new Date(event.date).toLocaleDateString()}</span>
               <span>Место: {event.place}</span>
-              <span>ID пользователя: {event.userId}</span>
+              <span>Координаты: {event.location}</span>
             </div>
+            <YMaps>
+              <div className={styles.mapContainer}>
+                <Map 
+                  defaultState={{ 
+                    center: event.location.split(',').map(coord => parseFloat(coord.trim())),
+                    zoom: 12 
+                  }}
+                  width="100%"
+                  height="200px"
+                >
+                  <Placemark 
+                    geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
+                    properties={{
+                      balloonContent: event.title
+                    }}
+                  />
+                </Map>
+              </div>
+            </YMaps>
           </div>
         ))}
       </div>

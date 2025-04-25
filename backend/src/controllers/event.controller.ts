@@ -51,7 +51,7 @@ const eventController = {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { title, description, date, place } = req.body;
+      const { title, description, date, place, location } = req.body;
       const user = req.user as User;
 
       if (!user) {
@@ -63,6 +63,7 @@ const eventController = {
         description,
         date: new Date(date),
         place,
+        location,
         userId: user.id,
       });
 

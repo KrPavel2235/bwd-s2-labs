@@ -28,7 +28,6 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      // TODO: Implement actual API call
       const response = await fetch('/auth/login', {
         method: 'POST',
         headers: {
@@ -43,8 +42,13 @@ const Login: React.FC = () => {
       }
 
       const data = await response.json();
-      // Store user data/token
-      localStorage.setItem('user', JSON.stringify(data));
+      localStorage.setItem('token', data.accessToken);
+      const tokenData = JSON.parse(atob(data.accessToken.split('.')[1]));
+      localStorage.setItem('user', JSON.stringify({
+        name: tokenData.name,
+        email: tokenData.email,
+        id: tokenData.id,
+      }));
       navigate('/events');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка при авторизации');

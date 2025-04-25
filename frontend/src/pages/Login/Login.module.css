@@ -8,64 +8,102 @@
 }
 
 .form {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form h2 {
+  margin: 0 0 20px 0;
+  text-align: center;
+  color: #333;
 }
 
 .formGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .formGroup label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
 }
 
 .formGroup input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 16px;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.error {
+  color: #dc3545;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f8d7da;
+  border-radius: 4px;
+  text-align: center;
 }
 
 .submitButton {
   width: 100%;
-  padding: 0.75rem;
+  padding: 12px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 16px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin-bottom: 15px;
 }
 
 .submitButton:hover {
   background-color: #0056b3;
 }
 
-.error {
-  color: #dc3545;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  background-color: #f8d7da;
-  border-radius: 4px;
-}
-
 .link {
   display: block;
   text-align: center;
-  margin-top: 1rem;
   color: #007bff;
   text-decoration: none;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px;
+  }
+
+  .form {
+    padding: 20px;
+  }
+
+  .form h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+  }
+
+  .formGroup input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .submitButton {
+    padding: 10px;
+    font-size: 14px;
+  }
 } 

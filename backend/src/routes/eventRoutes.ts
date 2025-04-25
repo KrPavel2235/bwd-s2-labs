@@ -77,6 +77,9 @@ router.get(
  *               place:
  *                 type: string
  *                 example: "Москва"
+ *               location:
+ *                 type: string
+ *                 example: "55.7558, 37.6173"
  *               userId:
  *                 type: string
  *                 example: "uuid-пользователя"

@@ -37,7 +37,6 @@ const Register: React.FC = () => {
     }
 
     try {
-      // TODO: Implement actual API call
       const response = await fetch('/auth/register', {
         method: 'POST',
         headers: {

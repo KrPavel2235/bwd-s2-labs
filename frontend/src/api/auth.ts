@@ -22,11 +22,6 @@ export interface AuthResponse {
   token: string;
 }
 
-/**
- * Login user with email and password
- * @param credentials - User login credentials
- * @returns Promise with auth response
- */
 export const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   const response = await fetch('/auth/login', {
     method: 'POST',
@@ -47,11 +42,6 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
   return data;
 };
 
-/**
- * Register a new user
- * @param userData - User registration data
- * @returns Promise with auth response
- */
 export const register = async (userData: RegisterData): Promise<AuthResponse> => {
   const response = await fetch('/auth/register', {
     method: 'POST',
@@ -72,9 +62,6 @@ export const register = async (userData: RegisterData): Promise<AuthResponse> =>
   return data;
 };
 
-/**
- * Logout the current user
- */
 export const logout = (): void => {
   removeFromStorage('user');
   removeFromStorage('token');

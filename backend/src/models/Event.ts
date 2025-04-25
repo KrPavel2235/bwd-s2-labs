@@ -7,6 +7,7 @@ export interface EventAttributes {
   description?: string;
   date: Date;
   place: string;
+  location: string;
   userId: number;
 }
 
@@ -21,6 +22,7 @@ export class Event
   declare description: string;
   declare date: Date;
   declare place: string;
+  declare location: string;
   declare userId: number;
 
   declare readonly createdAt: Date;
@@ -48,6 +50,13 @@ Event.init(
     place: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        is: /^-?\d+\.\d+,\s*-?\d+\.\d+$/, // Проверка формата координат
+      },
     },
     userId: {
       type: DataTypes.INTEGER,
