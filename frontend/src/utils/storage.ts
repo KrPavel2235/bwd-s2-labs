@@ -1,4 +1,3 @@
-
 export const saveToStorage = <T>(key: string, value: T): void => {
   try {
     const serializedValue = JSON.stringify(value);
@@ -35,4 +34,4 @@ export const clearStorage = (): void => {
   } catch (error) {
     console.error('Error clearing localStorage:', error);
   }
-}; 
+};

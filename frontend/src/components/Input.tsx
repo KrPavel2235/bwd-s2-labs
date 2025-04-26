@@ -20,7 +20,9 @@ const Input: React.FC<InputProps> = ({
     error ? styles.error : '',
     fullWidth ? styles.fullWidth : '',
     className,
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className={styles.container}>
@@ -29,14 +31,10 @@ const Input: React.FC<InputProps> = ({
           {label}
         </label>
       )}
-      <input
-        id={id}
-        className={inputClasses}
-        {...props}
-      />
+      <input id={id} className={inputClasses} {...props} />
       {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 };
 
-export default Input; 
+export default Input;

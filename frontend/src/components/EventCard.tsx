@@ -32,4 +32,4 @@ const EventCard: React.FC<EventCardProps> = ({
   );
 };
 
-export default EventCard; 
+export default EventCard;

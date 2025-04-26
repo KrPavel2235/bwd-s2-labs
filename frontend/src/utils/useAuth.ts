@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFromStorage, saveToStorage, removeFromStorage } from './storage';
+import { getFromStorage } from './storage';
 import { User, login as loginApi, register as registerApi, logout as logoutApi } from '../api/auth';
 
 interface AuthState {
@@ -96,4 +96,4 @@ export const useAuth = () => {
     register,
     logout,
   };
-}; 
+};

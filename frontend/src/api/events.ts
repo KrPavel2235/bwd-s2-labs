@@ -14,14 +14,14 @@ export interface Event {
  */
 export const getEvents = async (): Promise<Event[]> => {
   const token = getFromStorage<string>('token');
-  
+
   if (!token) {
     throw new Error('Не авторизован');
   }
 
   const response = await fetch('/api/events', {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -40,14 +40,14 @@ export const getEvents = async (): Promise<Event[]> => {
  */
 export const getEventById = async (id: number): Promise<Event> => {
   const token = getFromStorage<string>('token');
-  
+
   if (!token) {
     throw new Error('Не авторизован');
   }
 
   const response = await fetch(`/api/events/${id}`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -57,4 +57,4 @@ export const getEventById = async (id: number): Promise<Event> => {
   }
 
   return response.json();
-}; 
+};

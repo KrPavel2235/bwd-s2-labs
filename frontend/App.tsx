@@ -15,12 +15,12 @@ const App: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
+
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/events" element={<Events />} />
         </Route>
-        
+
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -28,4 +28,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App; 
+export default App;

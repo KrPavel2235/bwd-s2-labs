@@ -6,11 +6,9 @@ interface ProtectedRouteProps {
   redirectPath?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  redirectPath = '/login' 
-}) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectPath = '/login' }) => {
   const user = getFromStorage('user');
-  
+
   if (!user) {
     return <Navigate to={redirectPath} replace />;
   }
@@ -18,4 +16,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <Outlet />;
 };
 
-export default ProtectedRoute; 
+export default ProtectedRoute;

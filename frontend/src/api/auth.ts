@@ -65,4 +65,4 @@ export const register = async (userData: RegisterData): Promise<AuthResponse> =>
 export const logout = (): void => {
   removeFromStorage('user');
   removeFromStorage('token');
-}; 
+};

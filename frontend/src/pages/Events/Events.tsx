@@ -39,7 +39,7 @@ const Events: React.FC = () => {
     try {
       const response = await fetch('/events', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
@@ -87,18 +87,18 @@ const Events: React.FC = () => {
             </div>
             <YMaps>
               <div className={styles.mapContainer}>
-                <Map 
-                  defaultState={{ 
+                <Map
+                  defaultState={{
                     center: event.location.split(',').map(coord => parseFloat(coord.trim())),
-                    zoom: 12 
+                    zoom: 12,
                   }}
                   width="100%"
                   height="200px"
                 >
-                  <Placemark 
+                  <Placemark
                     geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
                     properties={{
-                      balloonContent: event.title
+                      balloonContent: event.title,
                     }}
                   />
                 </Map>
@@ -111,4 +111,4 @@ const Events: React.FC = () => {
   );
 };
 
-export default Events; 
+export default Events;

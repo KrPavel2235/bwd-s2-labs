@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -44,11 +44,14 @@ const Login: React.FC = () => {
       const data = await response.json();
       localStorage.setItem('token', data.accessToken);
       const tokenData = JSON.parse(atob(data.accessToken.split('.')[1]));
-      localStorage.setItem('user', JSON.stringify({
-        name: tokenData.name,
-        email: tokenData.email,
-        id: tokenData.id,
-      }));
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          name: tokenData.name,
+          email: tokenData.email,
+          id: tokenData.id,
+        })
+      );
       navigate('/events');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Произошла ошибка при авторизации');
@@ -93,4 +96,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;

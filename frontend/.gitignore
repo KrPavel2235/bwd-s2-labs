@@ -1,0 +1,14 @@
+
+node_modules/
+OLD_JS/
+
+.vscode/
+.idea/
+.env
+
+*.DS_Store
+Thumbs.db
+
+
+/build/
+/dist/

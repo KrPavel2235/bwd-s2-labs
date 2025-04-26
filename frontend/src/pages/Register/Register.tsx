@@ -23,7 +23,7 @@ const Register: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -120,4 +120,4 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register; 
+export default Register;

@@ -42,4 +42,4 @@ export const useEvents = () => {
     error: state.error,
     refetch: fetchEvents,
   };
-}; 
+};
