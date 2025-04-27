@@ -1,65 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Events.module.css';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectAuth, logout } from '../../store/slices/authSlice';
+import { selectEvents, fetchEvents } from '../../store/slices/eventsSlice';
 import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
-
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  userId: number;
-}
-
-interface User {
-  name: string;
-  email: string;
-  id: number;
-}
+import CreateEventForm from '../../components/CreateEventForm';
+import styles from './Events.module.css';
+import { Event } from '../../api/events';
 
 const Events: React.FC = () => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState<Event[]>([]);
-  const [error, setError] = useState<string>('');
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(selectAuth);
+  const { events, loading, error } = useAppSelector(selectEvents);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
+    if (!user) {
       navigate('/login');
       return;
     }
-
-    setUser(JSON.parse(userData));
-    fetchEvents();
-  }, [navigate]);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('/events', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Ошибка загрузки мероприятий');
-      }
-
-      const data = await response.json();
-      setEvents(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка при загрузке мероприятий');
-    }
-  };
+    dispatch(fetchEvents());
+  }, [navigate, dispatch, user]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    dispatch(logout());
     navigate('/login');
   };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
+  const handleCreateSuccess = () => {
+    setIsCreating(false);
+    dispatch(fetchEvents());
+  };
+
+  if (loading) {
+    return <div className={styles.loading}>Загрузка мероприятий...</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -67,16 +47,35 @@ const Events: React.FC = () => {
         <h1>Мероприятия</h1>
         <div className={styles.userInfo}>
           <span>Привет, {user?.name}!</span>
-          <button onClick={handleLogout} className={styles.logoutButton}>
-            Выйти
-          </button>
+          <div className={styles.buttons}>
+            <button onClick={handleProfileClick} className={styles.profileButton}>
+              Профиль
+            </button>
+            <button onClick={handleLogout} className={styles.logoutButton}>
+              Выйти
+            </button>
+          </div>
         </div>
       </header>
 
       {error && <div className={styles.error}>{error}</div>}
 
+      <div className={styles.actions}>
+        {!isCreating && (
+          <button onClick={() => setIsCreating(true)} className={styles.createButton}>
+            Создать мероприятие
+          </button>
+        )}
+      </div>
+
+      {isCreating && (
+        <div className={styles.createFormContainer}>
+          <CreateEventForm onSuccess={handleCreateSuccess} onCancel={() => setIsCreating(false)} />
+        </div>
+      )}
+
       <div className={styles.eventsGrid}>
-        {events.map(event => (
+        {events.map((event: Event) => (
           <div key={event.id} className={styles.eventCard}>
             <h3>{event.title}</h3>
             <p>{event.description}</p>
@@ -89,17 +88,18 @@ const Events: React.FC = () => {
               <div className={styles.mapContainer}>
                 <Map
                   defaultState={{
-                    center: event.location.split(',').map(coord => parseFloat(coord.trim())),
+                    center: event.location
+                      .split(',')
+                      .map((coord: string) => parseFloat(coord.trim())),
                     zoom: 12,
                   }}
                   width="100%"
                   height="200px"
                 >
                   <Placemark
-                    geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
-                    properties={{
-                      balloonContent: event.title,
-                    }}
+                    geometry={event.location
+                      .split(',')
+                      .map((coord: string) => parseFloat(coord.trim()))}
                   />
                 </Map>
               </div>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { login, selectAuth } from '../../store/slices/authSlice';
 import styles from './Login.module.css';
 
 interface LoginForm {
@@ -9,11 +11,12 @@ interface LoginForm {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error: authError } = useAppSelector(selectAuth);
   const [formData, setFormData] = useState<LoginForm>({
     email: '',
     password: '',
   });
-  const [error, setError] = useState<string>('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,36 +28,13 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
     try {
-      const response = await fetch('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Ошибка авторизации');
+      const result = await dispatch(login(formData)).unwrap();
+      if (result) {
+        navigate('/events');
       }
-
-      const data = await response.json();
-      localStorage.setItem('token', data.accessToken);
-      const tokenData = JSON.parse(atob(data.accessToken.split('.')[1]));
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          name: tokenData.name,
-          email: tokenData.email,
-          id: tokenData.id,
-        })
-      );
-      navigate('/events');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Произошла ошибка при авторизации');
+      // Ошибка уже обрабатывается в authSlice
     }
   };
 
@@ -62,7 +42,7 @@ const Login: React.FC = () => {
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <h2>Авторизация</h2>
-        {error && <div className={styles.error}>{error}</div>}
+        {authError && <div className={styles.error}>{authError}</div>}
         <div className={styles.formGroup}>
           <label htmlFor="email">Email:</label>
           <input
@@ -72,6 +52,7 @@ const Login: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
         <div className={styles.formGroup}>
@@ -83,10 +64,11 @@ const Login: React.FC = () => {
             value={formData.password}
             onChange={handleChange}
             required
+            disabled={loading}
           />
         </div>
-        <button type="submit" className={styles.submitButton}>
-          Войти
+        <button type="submit" className={styles.submitButton} disabled={loading}>
+          {loading ? 'Загрузка...' : 'Войти'}
         </button>
         <Link to="/register" className={styles.link}>
           Нет аккаунта? Зарегистрироваться

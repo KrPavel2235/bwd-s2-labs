@@ -6,6 +6,16 @@ export interface Event {
   description: string;
   date: string;
   place: string;
+  location: string;
+  userId: number;
+}
+
+export interface CreateEventData {
+  title: string;
+  description: string;
+  date: string;
+  place: string;
+  location: string;
 }
 
 /**
@@ -54,6 +64,36 @@ export const getEventById = async (id: number): Promise<Event> => {
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Ошибка загрузки мероприятия');
+  }
+
+  return response.json();
+};
+
+/**
+ * Create new event
+ * @param eventData - Event data
+ * @returns Promise with created event
+ */
+export const createEvent = async (eventData: CreateEventData): Promise<Event> => {
+  const token = getFromStorage<string>('token');
+
+  if (!token) {
+    throw new Error('Не авторизован');
+  }
+
+  const response = await fetch('/events', {
+    // фиксанул, маршрут был не очень
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Ошибка создания мероприятия');
   }
 
   return response.json();

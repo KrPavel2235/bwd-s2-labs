@@ -1,16 +1,13 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { getFromStorage } from '../utils/storage';
+import { useAppSelector } from '../store/hooks';
+import { selectAuth } from '../store/slices/authSlice';
 
-interface ProtectedRouteProps {
-  redirectPath?: string;
-}
+const ProtectedRoute: React.FC = () => {
+  const { isAuthenticated } = useAppSelector(selectAuth);
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectPath = '/login' }) => {
-  const user = getFromStorage('user');
-
-  if (!user) {
-    return <Navigate to={redirectPath} replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
