@@ -18,6 +18,10 @@ export interface CreateEventData {
   location: string;
 }
 
+export interface UpdateEventData extends CreateEventData {
+  id: number;
+}
+
 /**
  * Get all events
  * @returns Promise with events array
@@ -82,7 +86,6 @@ export const createEvent = async (eventData: CreateEventData): Promise<Event> =>
   }
 
   const response = await fetch('/events', {
-    // фиксанул, маршрут был не очень
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -94,6 +97,35 @@ export const createEvent = async (eventData: CreateEventData): Promise<Event> =>
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Ошибка создания мероприятия');
+  }
+
+  return response.json();
+};
+
+/**
+ * Update existing event
+ * @param eventData - Event data with ID
+ * @returns Promise with updated event
+ */
+export const updateEvent = async (eventData: UpdateEventData): Promise<Event> => {
+  const token = getFromStorage<string>('token');
+
+  if (!token) {
+    throw new Error('Не авторизован');
+  }
+
+  const response = await fetch(`/api/events/${eventData.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(eventData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Ошибка обновления мероприятия');
   }
 
   return response.json();

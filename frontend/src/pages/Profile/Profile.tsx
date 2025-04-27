@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAuth } from '../../store/slices/authSlice';
 import { selectProfile, fetchUserEvents } from '../../store/slices/profileSlice';
+import { deleteEvent } from '../../store/slices/eventsSlice';
 import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
+import EditEventForm from '../../components/EditEventForm';
 import styles from './Profile.module.css';
 
 const Profile: React.FC = () => {
@@ -11,6 +13,7 @@ const Profile: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   const { userEvents, loading, error } = useAppSelector(selectProfile);
+  const [editingEvent, setEditingEvent] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -24,6 +27,20 @@ const Profile: React.FC = () => {
     if (user?.id) {
       dispatch(fetchUserEvents(user.id));
     }
+  };
+
+  const handleDelete = async (eventId: number) => {
+    if (window.confirm('Вы уверены, что хотите удалить это мероприятие?')) {
+      try {
+        await dispatch(deleteEvent(eventId)).unwrap();
+      } catch (error) {
+        console.error('Ошибка при удалении мероприятия:', error);
+      }
+    }
+  };
+
+  const handleEditSuccess = () => {
+    setEditingEvent(null);
   };
 
   if (loading) {
@@ -68,29 +85,53 @@ const Profile: React.FC = () => {
         <div className={styles.eventsGrid}>
           {userEvents.map(event => (
             <div key={event.id} className={styles.eventCard}>
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <div className={styles.eventDetails}>
-                <span>Дата: {new Date(event.date).toLocaleDateString()}</span>
-                <span>Место: {event.place}</span>
-                <span>Координаты: {event.location}</span>
-              </div>
-              <YMaps>
-                <div className={styles.mapContainer}>
-                  <Map
-                    defaultState={{
-                      center: event.location.split(',').map(coord => parseFloat(coord.trim())),
-                      zoom: 12,
-                    }}
-                    width="100%"
-                    height="200px"
-                  >
-                    <Placemark
-                      geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
-                    />
-                  </Map>
-                </div>
-              </YMaps>
+              {editingEvent === event.id ? (
+                <EditEventForm
+                  event={event}
+                  onSuccess={handleEditSuccess}
+                  onCancel={() => setEditingEvent(null)}
+                />
+              ) : (
+                <>
+                  <div className={styles.eventActions}>
+                    <button
+                      className={styles.editButton}
+                      onClick={() => setEditingEvent(event.id)}
+                    >
+                      Редактировать
+                    </button>
+                    <button
+                      className={styles.deleteButton}
+                      onClick={() => handleDelete(event.id)}
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                  <h3>{event.title}</h3>
+                  <p>{event.description}</p>
+                  <div className={styles.eventDetails}>
+                    <span>Дата: {new Date(event.date).toLocaleDateString()}</span>
+                    <span>Место: {event.place}</span>
+                    <span>Координаты: {event.location}</span>
+                  </div>
+                  <YMaps>
+                    <div className={styles.mapContainer}>
+                      <Map
+                        defaultState={{
+                          center: event.location.split(',').map(coord => parseFloat(coord.trim())),
+                          zoom: 12,
+                        }}
+                        width="100%"
+                        height="200px"
+                      >
+                        <Placemark
+                          geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
+                        />
+                      </Map>
+                    </div>
+                  </YMaps>
+                </>
+              )}
             </div>
           ))}
         </div>

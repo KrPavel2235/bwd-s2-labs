@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../index';
-import { createEvent as createEventApi, CreateEventData, Event } from '../../api/events';
+import { createEvent as createEventApi, CreateEventData, Event, updateEvent as updateEventApi, UpdateEventData } from '../../api/events';
 import { getFromStorage } from '../../utils/storage';
 
 interface EventsState {
@@ -99,6 +99,20 @@ export const deleteEvent = createAsyncThunk(
   }
 );
 
+export const updateEvent = createAsyncThunk(
+  'events/updateEvent',
+  async (eventData: UpdateEventData, { rejectWithValue }) => {
+    try {
+      const event = await updateEventApi(eventData);
+      return event;
+    } catch (error) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'Ошибка обновления мероприятия'
+      );
+    }
+  }
+);
+
 const eventsSlice = createSlice({
   name: 'events',
   initialState,
@@ -140,6 +154,15 @@ const eventsSlice = createSlice({
         state.events = state.events.filter(event => event.id !== action.payload);
       })
       .addCase(deleteEvent.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+      .addCase(updateEvent.fulfilled, (state, action) => {
+        const index = state.events.findIndex(event => event.id === action.payload.id);
+        if (index !== -1) {
+          state.events[index] = action.payload;
+        }
+      })
+      .addCase(updateEvent.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },
