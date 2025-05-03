@@ -4,7 +4,9 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { selectAuth, logout } from '../../store/slices/authSlice';
 import { selectEvents, fetchEvents } from '../../store/slices/eventsSlice';
 import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
+import { YANDEX_MAPS_API_KEY } from '../../config/yandexMaps';
 import CreateEventForm from '../../components/CreateEventForm';
+import { EventCard } from '../../components/EventCard';
 import styles from './Events.module.css';
 import { Event } from '../../api/events';
 
@@ -76,35 +78,7 @@ const Events: React.FC = () => {
 
       <div className={styles.eventsGrid}>
         {events.map((event: Event) => (
-          <div key={event.id} className={styles.eventCard}>
-            <h3>{event.title}</h3>
-            <p>{event.description}</p>
-            <div className={styles.eventDetails}>
-              <span>Дата: {new Date(event.date).toLocaleDateString()}</span>
-              <span>Место: {event.place}</span>
-              <span>Координаты: {event.location}</span>
-            </div>
-            <YMaps>
-              <div className={styles.mapContainer}>
-                <Map
-                  defaultState={{
-                    center: event.location
-                      .split(',')
-                      .map((coord: string) => parseFloat(coord.trim())),
-                    zoom: 12,
-                  }}
-                  width="100%"
-                  height="200px"
-                >
-                  <Placemark
-                    geometry={event.location
-                      .split(',')
-                      .map((coord: string) => parseFloat(coord.trim()))}
-                  />
-                </Map>
-              </div>
-            </YMaps>
-          </div>
+          <EventCard key={event.id} event={event} onDelete={() => dispatch(fetchEvents())} />
         ))}
       </div>
     </div>

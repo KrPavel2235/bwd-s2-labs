@@ -1,42 +1,129 @@
 .card {
-  background-color: white;
+  background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  position: relative;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+.deleteButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+  background: rgba(255, 0, 0, 1);
+}
+
+.content {
+  padding: 20px;
+}
+
 .title {
-  margin: 0 0 1rem 0;
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
   color: #333;
-  font-size: 1.25rem;
 }
 
 .description {
+  margin: 0 0 15px 0;
   color: #666;
-  margin-bottom: 1.5rem;
   line-height: 1.5;
 }
 
 .details {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  margin-bottom: 15px;
   color: #666;
-  font-size: 0.9rem;
 }
 
-.detail {
+.date {
+  font-weight: 500;
+}
+
+.location {
+  font-style: italic;
+}
+
+.participantsSection {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 15px;
 }
 
-.detail strong {
-  margin-right: 0.5rem;
+.participantsCount {
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.participantsCount:hover {
   color: #333;
+}
+
+.participateButton {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.participateButton:hover {
+  background: #45a049;
+}
+
+.participateButton:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.unsubscribeButton {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.unsubscribeButton:hover {
+  background: #d32f2f;
+}
+
+.participatingText {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.mapContainer {
+  margin-top: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 } 

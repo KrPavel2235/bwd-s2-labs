@@ -9,7 +9,7 @@ interface UserEvent {
   date: string;
   location: string;
   place: string;
-  userId: number;
+  userIDs: number[];
 }
 
 interface ProfileState {
@@ -35,8 +35,8 @@ export const fetchUserEvents = createAsyncThunk(
       const state = getState() as RootState;
       const allEvents = state.events.events;
 
-      // Фильтруем мероприятия по userId
-      return allEvents.filter(event => event.userId === userId);
+      // Фильтруем мероприятия по userIDs
+      return allEvents.filter(event => event.userIDs.includes(userId));
     } catch (error) {
       console.error('Error fetching user events:', error);
       throw error;

@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import { useAppDispatch } from '../store/hooks';
+import { FC, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { createEvent } from '../store/slices/eventsSlice';
+import { CreateEventData } from '../api/events';
 import styles from './CreateEventForm.module.css';
+import { AppDispatch } from '../store';
 
-interface CreateEventFormProps {
-  onSuccess?: () => void;
-  onCancel?: () => void;
-}
-
-const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSuccess, onCancel }) => {
-  const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({
+const CreateEventForm: FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [formData, setFormData] = useState<CreateEventData>({
     title: '',
     description: '',
     date: '',
@@ -18,100 +15,77 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onSuccess, onCancel }
     location: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await dispatch(createEvent(formData)).unwrap();
-      if (onSuccess) {
-        onSuccess();
-      }
+      setFormData({
+        title: '',
+        description: '',
+        date: '',
+        place: '',
+        location: '',
+      });
     } catch (error) {
-      // Ошибка уже обрабатывается в slice
+      console.error('Ошибка при создании мероприятия:', error);
     }
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <h2>Создать мероприятие</h2>
-
+    <form onSubmit={handleSubmit} className={styles.form}>
       <div className={styles.formGroup}>
-        <label htmlFor="title">Название:</label>
+        <label htmlFor="title">Название</label>
         <input
           type="text"
           id="title"
-          name="title"
           value={formData.title}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           required
         />
       </div>
-
       <div className={styles.formGroup}>
-        <label htmlFor="description">Описание:</label>
+        <label htmlFor="description">Описание</label>
         <textarea
           id="description"
-          name="description"
           value={formData.description}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           required
         />
       </div>
-
       <div className={styles.formGroup}>
-        <label htmlFor="date">Дата:</label>
+        <label htmlFor="date">Дата</label>
         <input
           type="datetime-local"
           id="date"
-          name="date"
           value={formData.date}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, date: e.target.value })}
           required
         />
       </div>
-
       <div className={styles.formGroup}>
-        <label htmlFor="place">Место:</label>
+        <label htmlFor="place">Место</label>
         <input
           type="text"
           id="place"
-          name="place"
           value={formData.place}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, place: e.target.value })}
           required
         />
       </div>
-
       <div className={styles.formGroup}>
-        <label htmlFor="location">Координаты:</label>
+        <label htmlFor="location">Координаты (широта, долгота)</label>
         <input
           type="text"
           id="location"
-          name="location"
           value={formData.location}
-          placeholder="55.7558, 37.6173"
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          placeholder="Например: 55.751244, 37.618423"
           required
         />
       </div>
-
-      <div className={styles.buttons}>
-        <button type="submit" className={styles.submitButton}>
-          Создать
-        </button>
-        {onCancel && (
-          <button type="button" onClick={onCancel} className={styles.cancelButton}>
-            Отмена
-          </button>
-        )}
-      </div>
+      <button type="submit" className={styles.submitButton}>
+        Создать мероприятие
+      </button>
     </form>
   );
 };

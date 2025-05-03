@@ -161,4 +161,60 @@ router.delete(
   eventController.deleteEvent
 );
 
+/**
+ * @swagger
+ * /events/{id}/register:
+ *   post:
+ *     summary: Записаться на мероприятие
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID события
+ *     responses:
+ *       200:
+ *         description: Успешная запись на мероприятие
+ *       404:
+ *         description: Событие не найдено
+ *       403:
+ *         description: Пользователь уже записан на мероприятие
+ */
+router.post(
+  '/:id/register',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.registerForEvent
+);
+
+/**
+ * @swagger
+ * /events/{id}/cancel:
+ *   post:
+ *     summary: Отменить запись на мероприятие
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID события
+ *     responses:
+ *       200:
+ *         description: Запись на мероприятие отменена
+ *       404:
+ *         description: Событие не найдено
+ *       403:
+ *         description: Пользователь не записан на мероприятие
+ */
+router.post(
+  '/:id/cancel',
+  passport.authenticate('jwt', { session: false }),
+  isUser,
+  eventController.cancelRegistration
+);
+
 export default router;

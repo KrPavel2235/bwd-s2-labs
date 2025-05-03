@@ -8,7 +8,7 @@ export interface EventAttributes {
   date: Date;
   place: string;
   location: string;
-  userId: number;
+  userIDs: number[];
 }
 
 export interface EventCreationAttributes extends Optional<EventAttributes, 'id'> {}
@@ -23,7 +23,7 @@ export class Event
   declare date: Date;
   declare place: string;
   declare location: string;
-  declare userId: number;
+  declare userIDs: number[];
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -58,9 +58,9 @@ Event.init(
         is: /^-?\d+\.\d+,\s*-?\d+\.\d+$/, // Проверка формата координат
       },
     },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    userIDs: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
+      defaultValue: [],
     },
   },
   {

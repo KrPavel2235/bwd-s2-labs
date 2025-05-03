@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../store/hooks';
 import { updateEvent } from '../store/slices/eventsSlice';
-import { Event } from '../api/events';
+import { Event, UpdateEventData } from '../api/events';
 import styles from './CreateEventForm.module.css';
 
 interface EditEventFormProps {
@@ -12,8 +12,7 @@ interface EditEventFormProps {
 
 const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSuccess, onCancel }) => {
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({
-    id: event.id,
+  const [formData, setFormData] = useState<UpdateEventData>({
     title: event.title,
     description: event.description,
     date: event.date,
@@ -32,7 +31,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onSuccess, onCance
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(updateEvent(formData)).unwrap();
+      await dispatch(updateEvent({ id: event.id, eventData: formData })).unwrap();
       if (onSuccess) {
         onSuccess();
       }

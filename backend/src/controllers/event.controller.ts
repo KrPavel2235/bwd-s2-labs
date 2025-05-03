@@ -3,7 +3,7 @@ import { Event, EventAttributes } from '@models/Event';
 import { User } from '@models/User';
 import { NotFoundError, ForbiddenError } from '@config/error';
 
-type CreateEventRequest = Omit<EventAttributes, 'id' | 'userId'> & {
+type CreateEventRequest = Omit<EventAttributes, 'id'> & {
   date: string;
 };
 
@@ -13,9 +13,7 @@ const eventController = {
   // Получить все события
   async getAllEvents(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const events = await Event.findAll({
-        include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }],
-      });
+      const events = await Event.findAll();
       res.json(events);
     } catch (err) {
       next(err);
@@ -30,9 +28,7 @@ const eventController = {
   ): Promise<void> {
     try {
       const { id } = req.params;
-      const event = await Event.findByPk(id, {
-        include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'] }],
-      });
+      const event = await Event.findByPk(id);
 
       if (!event) {
         throw new NotFoundError('Событие не найдено');
@@ -64,7 +60,7 @@ const eventController = {
         date: new Date(date),
         place,
         location,
-        userId: user.id,
+        userIDs: [user.id],
       });
 
       res.status(201).json(event);
@@ -94,7 +90,7 @@ const eventController = {
         throw new NotFoundError('Событие не найдено');
       }
 
-      if (event.userId !== user.id) {
+      if (!event.userIDs.includes(user.id)) {
         throw new ForbiddenError('Нет прав на редактирование этого события');
       }
 
@@ -129,13 +125,83 @@ const eventController = {
         throw new NotFoundError('Событие не найдено');
       }
 
-      if (event.userId !== user.id) {
+      if (!event.userIDs.includes(user.id)) {
         throw new ForbiddenError('Нет прав на удаление этого события');
       }
 
       await event.destroy();
 
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Записаться на мероприятие
+  async registerForEvent(
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.params;
+      const user = req.user as User;
+
+      if (!user) {
+        throw new ForbiddenError('Пользователь не авторизован');
+      }
+
+      const event = await Event.findByPk(id);
+
+      if (!event) {
+        throw new NotFoundError('Событие не найдено');
+      }
+
+      // Проверяем, не записан ли уже пользователь
+      if (event.userIDs.includes(user.id)) {
+        throw new ForbiddenError('Вы уже записаны на это мероприятие');
+      }
+
+      // Добавляем ID пользователя в массив userIds
+      const updatedUserIDs = [...event.userIDs, user.id];
+      await event.update({ userIDs: updatedUserIDs });
+
+      res.json({ message: 'Вы успешно записаны на мероприятие' });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // Отменить запись на мероприятие
+  async cancelRegistration(
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = req.params;
+      const user = req.user as User;
+
+      if (!user) {
+        throw new ForbiddenError('Пользователь не авторизован');
+      }
+
+      const event = await Event.findByPk(id);
+
+      if (!event) {
+        throw new NotFoundError('Событие не найдено');
+      }
+
+      // Проверяем, записан ли пользователь
+      if (!event.userIDs.includes(user.id)) {
+        throw new ForbiddenError('Вы не записаны на это мероприятие');
+      }
+
+      // Удаляем ID пользователя из массива userIds
+      const updatedUserIDs = event.userIDs.filter(userId => userId !== user.id);
+      await event.update({ userIDs: updatedUserIDs });
+
+      res.json({ message: 'Вы отменили запись на мероприятие' });
     } catch (error) {
       next(error);
     }

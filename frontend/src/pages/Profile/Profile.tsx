@@ -5,8 +5,14 @@ import { selectAuth } from '../../store/slices/authSlice';
 import { selectProfile, fetchUserEvents } from '../../store/slices/profileSlice';
 import { deleteEvent } from '../../store/slices/eventsSlice';
 import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
+import { YANDEX_MAPS_API_KEY } from '../../config/yandexMaps';
 import EditEventForm from '../../components/EditEventForm';
 import styles from './Profile.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEvents } from '../../store/slices/eventsSlice';
+import { RootState } from '../../store';
+import { EventCard } from '../../components/EventCard';
+import { AppDispatch } from '../../store';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -43,6 +49,16 @@ const Profile: React.FC = () => {
     setEditingEvent(null);
   };
 
+  const events = useSelector((state: RootState) => state.events.events);
+  const currentUser = useSelector((state: RootState) => state.auth.user);
+
+  // События, созданные пользователем
+  const createdEvents = events.filter(event => event.userIDs[0] === currentUser?.id);
+  // События, на которые записался пользователь
+  const participatedEvents = events.filter(event => 
+    event.userIDs.includes(currentUser?.id || 0) && event.userIDs[0] !== currentUser?.id
+  );
+
   if (loading) {
     return <div className={styles.loading}>Загрузка профиля...</div>;
   }
@@ -78,12 +94,12 @@ const Profile: React.FC = () => {
       )}
 
       <div className={styles.eventsSection}>
-        <h2>Мои мероприятия</h2>
-        {userEvents.length === 0 && !error && (
+        <h2>Созданные мной мероприятия</h2>
+        {createdEvents.length === 0 && !error && (
           <div className={styles.noEvents}>У вас пока нет созданных мероприятий</div>
         )}
         <div className={styles.eventsGrid}>
-          {userEvents.map(event => (
+          {createdEvents.map(event => (
             <div key={event.id} className={styles.eventCard}>
               {editingEvent === event.id ? (
                 <EditEventForm
@@ -114,7 +130,7 @@ const Profile: React.FC = () => {
                     <span>Место: {event.place}</span>
                     <span>Координаты: {event.location}</span>
                   </div>
-                  <YMaps>
+                  <YMaps query={{ apikey: YANDEX_MAPS_API_KEY }}>
                     <div className={styles.mapContainer}>
                       <Map
                         defaultState={{
@@ -132,6 +148,42 @@ const Profile: React.FC = () => {
                   </YMaps>
                 </>
               )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.eventsSection}>
+        <h2>Мероприятия, на которые я записался</h2>
+        {participatedEvents.length === 0 && !error && (
+          <div className={styles.noEvents}>Вы пока не записаны ни на одно мероприятие</div>
+        )}
+        <div className={styles.eventsGrid}>
+          {participatedEvents.map(event => (
+            <div key={event.id} className={styles.eventCard}>
+              <h3>{event.title}</h3>
+              <p>{event.description}</p>
+              <div className={styles.eventDetails}>
+                <span>Дата: {new Date(event.date).toLocaleDateString()}</span>
+                <span>Место: {event.place}</span>
+                <span>Координаты: {event.location}</span>
+              </div>
+              <YMaps query={{ apikey: YANDEX_MAPS_API_KEY }}>
+                <div className={styles.mapContainer}>
+                  <Map
+                    defaultState={{
+                      center: event.location.split(',').map(coord => parseFloat(coord.trim())),
+                      zoom: 12,
+                    }}
+                    width="100%"
+                    height="200px"
+                  >
+                    <Placemark
+                      geometry={event.location.split(',').map(coord => parseFloat(coord.trim()))}
+                    />
+                  </Map>
+                </div>
+              </YMaps>
             </div>
           ))}
         </div>
